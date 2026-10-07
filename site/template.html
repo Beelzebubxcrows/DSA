@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root {
+  --bg:#f6f6f3; --panel:#ffffff; --panel-2:#efefea; --text:#1c1c1f; --muted:#6b6b72; --border:#e2e2dc;
+  --accent:#4f46e5; --accent-soft:#ecebff; --accent-text:#ffffff;
+  --easy:#15803d; --med:#b45309; --hard:#b91c1c;
+  --ok-bg:#dcfce7; --hint-bg:#fef3c7; --fail-bg:#fee2e2;
+  --code-bg:#f3f3ef; --heat-0:#e8e8e2; --heat-1:#c7c4ff; --heat-2:#9f9aff; --heat-3:#6e66f0; --heat-4:#4338ca;
+  --tok-kw:#7c3aed; --tok-str:#15803d; --tok-com:#8a8a90; --tok-num:#c2410c; --tok-fn:#2563eb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0f1115; --panel:#171a21; --panel-2:#1f232c; --text:#e7e7ea; --muted:#9a9aa6; --border:#2a2f3a;
+    --accent:#8b8cff; --accent-soft:#25274a; --accent-text:#0f1115;
+    --easy:#4ade80; --med:#fbbf24; --hard:#f87171;
+    --ok-bg:#143620; --hint-bg:#3a2e0e; --fail-bg:#3d1717;
+    --code-bg:#12151b; --heat-0:#1f232c; --heat-1:#2e3170; --heat-2:#4247a8; --heat-3:#6366f1; --heat-4:#a5a6ff;
+    --tok-kw:#c4a7ff; --tok-str:#86efac; --tok-com:#6b7280; --tok-num:#fdba74; --tok-fn:#93c5fd;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0f1115; --panel:#171a21; --panel-2:#1f232c; --text:#e7e7ea; --muted:#9a9aa6; --border:#2a2f3a;
+  --accent:#8b8cff; --accent-soft:#25274a; --accent-text:#0f1115;
+  --easy:#4ade80; --med:#fbbf24; --hard:#f87171;
+  --ok-bg:#143620; --hint-bg:#3a2e0e; --fail-bg:#3d1717;
+  --code-bg:#12151b; --heat-0:#1f232c; --heat-1:#2e3170; --heat-2:#4247a8; --heat-3:#6366f1; --heat-4:#a5a6ff;
+  --tok-kw:#c4a7ff; --tok-str:#86efac; --tok-com:#6b7280; --tok-num:#fdba74; --tok-fn:#93c5fd;
+  --shadow:none;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; }
+body { background:var(--bg); color:var(--text); font:15px/1.6 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+button { font:inherit; color:inherit; cursor:pointer; }
+code, pre { font-family:"JetBrains Mono", ui-monospace, Menlo, monospace; }
+
+/* Layout */
+.layout { display:grid; grid-template-columns:268px minmax(0,1fr); min-height:100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--panel); border-right:1px solid var(--border); padding:20px 14px; display:flex; flex-direction:column; gap:18px; }
+.main { padding:32px 40px 80px; max-width:1040px; width:100%; min-width:0; }
+.brand { font-weight:700; font-size:18px; padding:0 8px; display:flex; align-items:center; gap:8px; }
+.brand .logo { width:26px; height:26px; border-radius:7px; background:var(--accent); color:var(--accent-text); display:grid; place-items:center; font-size:13px; }
+.nav { display:flex; flex-direction:column; gap:2px; }
+.nav a, .topic-link { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; color:var(--text); font-size:14px; }
+.nav a:hover, .topic-link:hover { background:var(--panel-2); text-decoration:none; }
+.nav a.active, .topic-link.active { background:var(--accent-soft); color:var(--accent); font-weight:600; }
+.badge { margin-left:auto; background:var(--accent); color:var(--accent-text); border-radius:999px; font-size:11px; padding:1px 8px; font-weight:600; }
+.side-label { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); padding:0 10px; margin-bottom:4px; font-weight:600; }
+.topic-link { font-size:13.5px; }
+.topic-link .tnum { color:var(--muted); font-variant-numeric:tabular-nums; width:18px; flex:none; }
+.topic-link .tname { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.topic-link .tprog { font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; }
+.topic-link.done .tprog { color:var(--easy); font-weight:600; }
+.side-foot { margin-top:auto; display:flex; flex-wrap:wrap; gap:6px; padding-top:12px; border-top:1px solid var(--border); }
+.btn { border:1px solid var(--border); background:var(--panel); border-radius:8px; padding:6px 12px; font-size:13px; }
+.btn:hover { background:var(--panel-2); }
+.btn.primary { background:var(--accent); color:var(--accent-text); border-color:var(--accent); font-weight:600; }
+.btn.primary:hover { filter:brightness(1.08); }
+.btn.sm { padding:4px 9px; font-size:12px; }
+.topbar { display:none; }
+
+/* Headings */
+.eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; }
+h1.page { font-size:30px; margin:4px 0 6px; letter-spacing:-.02em; }
+.sub { color:var(--muted); margin:0 0 24px; }
+
+/* Cards & stats */
+.grid { display:grid; gap:14px; }
+.stats { grid-template-columns:repeat(4, minmax(0,1fr)); margin-bottom:22px; }
+.panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow); min-width:0; }
+.stat .v { font-size:28px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.stat .l { color:var(--muted); font-size:13px; }
+.bar { height:6px; background:var(--panel-2); border-radius:99px; overflow:hidden; }
+.bar > i { display:block; height:100%; background:var(--accent); border-radius:99px; }
+.two { grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); margin-bottom:22px; }
+.panel h3 { margin:0 0 12px; font-size:15px; }
+.diffrow { display:grid; grid-template-columns:64px minmax(0,1fr) 56px; align-items:center; gap:10px; margin:8px 0; font-size:13px; }
+.diffrow .n { text-align:right; color:var(--muted); font-variant-numeric:tabular-nums; }
+.topics-grid { grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); }
+.tcard { display:block; color:var(--text); }
+.tcard:hover { text-decoration:none; border-color:var(--accent); }
+.tcard .tc-num { font-size:12px; color:var(--muted); font-weight:600; }
+.tcard .tc-name { font-weight:600; margin:2px 0 10px; }
+.tcard .tc-foot { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px; }
+.pill { font-size:11px; padding:1px 8px; border-radius:99px; background:var(--panel-2); color:var(--muted); font-weight:600; }
+.pill.prog { background:var(--hint-bg); color:var(--med); }
+.pill.done { background:var(--ok-bg); color:var(--easy); }
+
+/* Heatmap */
+.heat { display:grid; grid-template-rows:repeat(7, 12px); grid-auto-flow:column; grid-auto-columns:12px; gap:3px; overflow-x:auto; padding-bottom:4px; }
+.heat i { border-radius:3px; background:var(--heat-0); }
+.heat i.l1 { background:var(--heat-1); } .heat i.l2 { background:var(--heat-2); } .heat i.l3 { background:var(--heat-3); } .heat i.l4 { background:var(--heat-4); }
+.heat i.future { background:transparent; }
+
+/* Problem tables */
+.tablewrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:var(--panel); }
+table.probs { width:100%; border-collapse:collapse; font-size:14px; }
+table.probs th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+table.probs td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+table.probs tr:last-child td { border-bottom:none; }
+table.probs tr.r-solved { background:color-mix(in srgb, var(--ok-bg) 45%, transparent); }
+table.probs tr.r-hint { background:color-mix(in srgb, var(--hint-bg) 45%, transparent); }
+table.probs tr.r-failed { background:color-mix(in srgb, var(--fail-bg) 45%, transparent); }
+td.num { color:var(--muted); font-variant-numeric:tabular-nums; width:52px; }
+td.meta { color:var(--muted); font-size:12px; white-space:nowrap; }
+td.pattern { color:var(--muted); font-size:13px; }
+td.pattern.blur { filter:blur(5px); cursor:pointer; user-select:none; transition:filter .15s; }
+td.pattern.blur.peek { filter:none; }
+.dot { width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--border); }
+.dot.solved { background:var(--easy); } .dot.hint { background:var(--med); } .dot.failed { background:var(--hard); }
+.diff { font-size:12px; font-weight:600; }
+.d-E { color:var(--easy); } .d-M { color:var(--med); } .d-H { color:var(--hard); }
+.tag { font-size:12px; }
+.tag.star { color:var(--med); }
+td.acts { white-space:nowrap; text-align:right; }
+td.acts button { width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--panel); margin-left:3px; font-size:13px; font-weight:600; }
+td.acts button[data-act="solved"]:hover { background:var(--ok-bg); color:var(--easy); border-color:var(--easy); }
+td.acts button[data-act="hint"]:hover { background:var(--hint-bg); color:var(--med); border-color:var(--med); }
+td.acts button[data-act="failed"]:hover { background:var(--fail-bg); color:var(--hard); border-color:var(--hard); }
+td.acts button[data-act="reset"] { color:var(--muted); }
+.legend { display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--muted); margin:8px 0 10px; }
+
+/* Filters */
+.filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center; }
+input[type=search], select { font:inherit; font-size:14px; padding:7px 10px; border-radius:8px; border:1px solid var(--border); background:var(--panel); color:var(--text); }
+input[type=search] { flex:1; min-width:180px; }
+label.chk { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+
+/* Prose (rendered markdown) */
+.prose { min-width:0; }
+.prose h1 { display:none; }
+.prose h2 { font-size:20px; margin:34px 0 10px; padding-top:6px; letter-spacing:-.01em; }
+.prose h3 { font-size:16px; margin:22px 0 8px; }
+.prose blockquote { margin:0 0 16px; padding:10px 14px; background:var(--accent-soft); border-radius:10px; color:var(--text); border:none; }
+.prose blockquote p { margin:0; }
+.prose ul, .prose ol { padding-left:22px; }
+.prose li { margin:3px 0; }
+.prose :not(pre) > code { background:var(--code-bg); border:1px solid var(--border); padding:1px 5px; border-radius:5px; font-size:.86em; }
+.prose pre, .card-back pre { background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+.prose pre code { background:none; padding:0; }
+.prose table { border-collapse:collapse; width:100%; font-size:14px; display:block; overflow-x:auto; }
+.prose th, .prose td { border:1px solid var(--border); padding:7px 10px; text-align:left; }
+.prose th { background:var(--panel-2); font-size:13px; }
+.hljs { background:none; color:var(--text); }
+.hljs-keyword, .hljs-built_in, .hljs-meta { color:var(--tok-kw); }
+.hljs-string { color:var(--tok-str); }
+.hljs-comment { color:var(--tok-com); font-style:italic; }
+.hljs-number, .hljs-literal { color:var(--tok-num); }
+.hljs-title, .hljs-title.function_, .hljs-title.class_ { color:var(--tok-fn); }
+
+.topic-head { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between; margin-bottom:18px; }
+.topic-head .actions { display:flex; gap:8px; flex-wrap:wrap; }
+.topic-prog { display:flex; align-items:center; gap:12px; font-size:13px; color:var(--muted); margin-bottom:22px; }
+.topic-prog .bar { flex:1; max-width:340px; }
+.pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px; }
+.pager a { flex:1; border:1px solid var(--border); border-radius:12px; padding:12px 16px; background:var(--panel); color:var(--text); }
+.pager a:hover { border-color:var(--accent); text-decoration:none; }
+.pager a small { display:block; color:var(--muted); font-size:12px; }
+.pager a.next { text-align:right; }
+
+/* Revise */
+.tabs { display:flex; gap:4px; background:var(--panel-2); padding:4px; border-radius:10px; flex-wrap:wrap; }
+.tabs a { padding:6px 14px; border-radius:7px; color:var(--muted); font-size:14px; font-weight:500; }
+.tabs a:hover { text-decoration:none; color:var(--text); }
+.tabs a.active { background:var(--panel); color:var(--text); box-shadow:var(--shadow); }
+.revbar { display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.card { background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:var(--shadow); max-width:760px; }
+.card-meta { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:16px; }
+.card-label { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:600; margin-bottom:8px; }
+.card-front { font-size:20px; font-weight:600; line-height:1.45; }
+.card-front p { margin:0; }
+.card-front .sub2 { font-size:14px; color:var(--muted); font-weight:400; margin-top:6px; }
+.card-back { margin-top:20px; padding-top:20px; border-top:1px dashed var(--border); }
+.card-back .ans { font-size:18px; font-weight:700; color:var(--accent); }
+.card-actions { display:flex; gap:10px; margin-top:24px; flex-wrap:wrap; }
+.card-actions .btn { padding:9px 18px; font-size:14px; }
+.btn.good { background:var(--ok-bg); color:var(--easy); border-color:transparent; font-weight:600; }
+.btn.bad { background:var(--fail-bg); color:var(--hard); border-color:transparent; font-weight:600; }
+kbd { font-family:"JetBrains Mono", monospace; font-size:11px; border:1px solid var(--border); border-bottom-width:2px; border-radius:4px; padding:0 5px; margin-left:6px; opacity:.75; }
+.empty { text-align:center; padding:40px 20px; color:var(--muted); }
+.empty .big { font-size:36px; margin-bottom:6px; }
+.nextup li { margin:6px 0; }
+.muted { color:var(--muted); }
+.section-gap { margin-top:28px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns:minmax(0,1fr); }
+  .sidebar { position:fixed; left:0; top:0; z-index:20; width:280px; transform:translateX(-100%); transition:transform .2s; box-shadow:0 0 40px rgba(0,0,0,.25); }
+  body.nav-open .sidebar { transform:none; }
+  .topbar { display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:10; background:var(--panel); border-bottom:1px solid var(--border); padding:10px 16px; font-weight:700; }
+  .main { padding:20px 16px 60px; }
+  .stats { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .two { grid-template-columns:minmax(0,1fr); }
+  .card { padding:20px; }
+  td.meta, th.meta { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="topbar"><button class="btn sm" id="menu">☰</button> DSA Prep</div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+<input type="file" id="importFile" accept="application/json" hidden>
+<script>
+const DATA = /*__DATA__*/null;
+const LS_KEY = 'dsa-prep-v1';
+const INTERVALS = [1, 3, 7, 21, 45, 90];
+
+/* ---------- utils ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dateStr = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const today = () => dateStr(new Date());
+const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return dateStr(d); };
+const dayDiff = s => Math.round((Date.parse(s) - Date.parse(today())) / 86400000);
+const relDay = s => { const n = dayDiff(s); return n <= 0 ? '<b>due</b>' : n === 1 ? 'tomorrow' : 'in ' + n + 'd'; };
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const md = s => window.marked ? marked.parse(s) : '<pre>' + esc(s) + '</pre>';
+const DIFF = { E: 'Easy', M: 'Medium', H: 'Hard' };
+
+/* ---------- state ---------- */
+function load() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { return {}; } }
+let state = load();
+function norm() { state.problems ||= {}; state.cards ||= {}; state.activity ||= {}; state.settings ||= {}; }
+norm();
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+function bump() { const t = today(); state.activity[t] = (state.activity[t] || 0) + 1; }
+
+/* ---------- parse markdown data ---------- */
+const PROB_RE = /^\|\s*\[( |x|X)\]\s*\|\s*(\d+)\s*\|\s*\[([^\]]+)\]\(([^)]+)\)\s*(🔒)?\s*\|\s*([EMH])\s*\|\s*(.*?)\s*\|\s*$/u;
+function sections(text) {
+  const out = {};
+  text.split(/^## /m).slice(1).forEach(p => { const nl = p.indexOf('\n'); out[p.slice(0, nl).trim()] = p.slice(nl + 1); });
+  return out;
+}
+const TOPICS = DATA.topics.map(t => {
+  const m = t.title.match(/^(\d+)\s*·\s*(.*)$/);
+  const topic = { ...t, num: m ? m[1] : '', name: m ? m[2] : t.title, problems: [], sections: sections(t.md) };
+  t.md.split('\n').forEach(line => {
+    const r = line.match(PROB_RE);
+    if (!r) return;
+    topic.problems.push({
+      num: +r[2], title: r[3], url: r[4], premium: !!r[5], diff: r[6],
+      pattern: r[7].replace('⭐', '').trim(), star: r[7].includes('⭐'),
+      mdDone: r[1].toLowerCase() === 'x', topic: t.id,
+    });
+  });
+  return topic;
+});
+const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+const ALL = TOPICS.flatMap(t => t.problems);
+
+/* ---------- problem status ---------- */
+const pst = p => state.problems[p.num];
+const isSolved = p => { const s = pst(p); return !!(s && s.history.some(h => h.r === 'solved')) || p.mdDone; };
+const lastResult = p => { const s = pst(p); return s && s.history.length ? s.history[s.history.length - 1].r : (p.mdDone ? 'solved' : null); };
+const isDue = p => { const s = pst(p); return !!(s && s.next && s.next <= today()); };
+function logAttempt(num, r) {
+  const s = state.problems[num] ||= { history: [], stage: 0 };
+  s.history.push({ d: today(), r });
+  if (r === 'solved') { s.stage = Math.min((s.stage || 0) + 1, INTERVALS.length - 1); s.next = addDays(INTERVALS[s.stage]); }
+  else if (r === 'hint') { s.stage = 0; s.next = addDays(2); }
+  else { s.stage = 0; s.next = addDays(1); }
+  bump();
+}
+function topicStats(t) {
+  const solved = t.problems.filter(isSolved).length, total = t.problems.length;
+  return { solved, total, pct: total ? Math.round(solved / total * 100) : 0, status: solved === 0 ? 'todo' : solved === total ? 'done' : 'prog' };
+}
+function streak() {
+  let n = 0; const d = new Date();
+  if (!(state.activity[dateStr(d)] > 0)) d.setDate(d.getDate() - 1);
+  while (state.activity[dateStr(d)] > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+/* ---------- shared renderers ---------- */
+const statusDot = r => '<span class="dot ' + (r || '') + '" title="' + (r ? 'Last: ' + r : 'Not attempted') + '"></span>';
+function probRow(p, showTopic) {
+  const s = pst(p), lr = lastResult(p), hide = state.settings.hidePatterns;
+  return '<tr data-num="' + p.num + '" class="r-' + (lr || 'none') + '">' +
+    '<td>' + statusDot(lr) + '</td>' +
+    '<td class="num">' + p.num + '</td>' +
+    '<td><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>' +
+      (p.premium ? ' <span class="tag" title="LeetCode Premium">🔒</span>' : '') +
+      (p.star ? ' <span class="tag star" title="Frequently asked">★</span>' : '') + '</td>' +
+    '<td><span class="diff d-' + p.diff + '">' + DIFF[p.diff] + '</span></td>' +
+    (showTopic ? '<td><a href="#/topic/' + p.topic + '">' + esc(topicById[p.topic].name) + '</a></td>' : '') +
+    '<td class="pattern' + (hide ? ' blur' : '') + '" title="' + (hide ? 'Click to peek' : '') + '">' + esc(p.pattern) + '</td>' +
+    '<td class="meta">' + (s && s.history.length ? s.history.length + '× · next ' + relDay(s.next) : (p.mdDone ? 'ticked in .md' : '—')) + '</td>' +
+    '<td class="acts"><button data-act="solved" title="Solved on my own">✓</button><button data-act="hint" title="Needed a hint">~</button><button data-act="failed" title="Couldn\'t solve">✗</button>' +
+      (s ? '<button data-act="reset" title="Clear history">↺</button>' : '') + '</td></tr>';
+}
+function probTable(list, showTopic) {
+  if (!list.length) return '<div class="panel empty">No problems match.</div>';
+  return '<div class="tablewrap"><table class="probs"><thead><tr><th></th><th>#</th><th>Problem</th><th>Diff</th>' +
+    (showTopic ? '<th>Topic</th>' : '') + '<th>Pattern</th><th class="meta">History</th><th style="text-align:right">Log attempt</th></tr></thead><tbody>' +
+    list.map(p => probRow(p, showTopic)).join('') + '</tbody></table></div>';
+}
+const legend = '<div class="legend"><span>✓ solved on my own</span><span>~ needed a hint</span><span>✗ couldn\'t solve</span><span>Revisits: ✓ → 3, 7, 21, 45, 90 days · ~ → 2 days · ✗ → tomorrow</span></div>';
+
+/* ---------- views ---------- */
+function viewDashboard() {
+  const total = ALL.length, solved = ALL.filter(isSolved).length, due = ALL.filter(isDue).length;
+  const week = Object.entries(state.activity).filter(([d]) => dayDiff(d) > -7).reduce((a, [, n]) => a + n, 0);
+  const byDiff = ['E', 'M', 'H'].map(d => { const ps = ALL.filter(p => p.diff === d); return { d, t: ps.length, s: ps.filter(isSolved).length }; });
+  const nextUp = ALL.filter(p => !isSolved(p) && !pst(p)).slice(0, 6);
+
+  // heatmap: 16 weeks ending today
+  const now = new Date(), start = new Date(now);
+  start.setDate(now.getDate() - (7 * 15 + now.getDay()));
+  let cells = '';
+  for (let d = new Date(start), i = 0; i < 16 * 7; i++, d.setDate(d.getDate() + 1)) {
+    const k = dateStr(d), n = state.activity[k] || 0;
+    const lvl = d > now ? 'future' : n === 0 ? '' : n === 1 ? 'l1' : n <= 3 ? 'l2' : n <= 5 ? 'l3' : 'l4';
+    cells += '<i class="' + lvl + '" title="' + k + ': ' + n + ' reviews"></i>';
+  }
+
+  return '<div class="eyebrow">Overview</div><h1 class="page">Dashboard</h1><p class="sub">Work through the topics in order. Log every attempt so it comes back up for revision.</p>' +
+    '<div class="grid stats">' +
+      '<div class="panel stat"><div class="v">' + solved + '<span class="muted" style="font-size:16px">/' + total + '</span></div><div class="l">Problems solved</div><div class="bar" style="margin-top:10px"><i style="width:' + (solved / total * 100) + '%"></i></div></div>' +
+      '<div class="panel stat"><div class="v">' + due + '</div><div class="l">Due for revision</div>' + (due ? '<a href="#/revise/due/all" style="font-size:13px">Review now →</a>' : '') + '</div>' +
+      '<div class="panel stat"><div class="v">' + streak() + '</div><div class="l">Day streak</div></div>' +
+      '<div class="panel stat"><div class="v">' + week + '</div><div class="l">Reviews in last 7 days</div></div>' +
+    '</div>' +
+    '<div class="grid two">' +
+      '<div class="panel"><h3>Activity</h3><div class="heat">' + cells + '</div>' +
+        '<h3 class="section-gap">By difficulty</h3>' +
+        byDiff.map(x => '<div class="diffrow"><span class="diff d-' + x.d + '">' + DIFF[x.d] + '</span><div class="bar"><i style="width:' + (x.s / x.t * 100) + '%;background:var(--' + { E: 'easy', M: 'med', H: 'hard' }[x.d] + ')"></i></div><span class="n">' + x.s + '/' + x.t + '</span></div>').join('') +
+      '</div>' +
+      '<div class="panel"><h3>Next up</h3>' + (nextUp.length ? '<ol class="nextup">' + nextUp.map(p => '<li><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a> <span class="diff d-' + p.diff + '">' + p.diff + '</span><br><small class="muted"><a class="muted" href="#/topic/' + p.topic + '">' + esc(topicById[p.topic].name) + '</a></small></li>').join('') + '</ol>' : '<p class="muted">Everything attempted. 🎉</p>') +
+        '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn primary" href="#/revise/pattern/all">Pattern drill</a><a class="btn" href="#/revise/template/all">Template recall</a></div></div>' +
+    '</div>' +
+    '<h3>Topics</h3><div class="grid topics-grid">' +
+      TOPICS.map(t => { const s = topicStats(t);
+        return '<a class="panel tcard" href="#/topic/' + t.id + '"><div class="tc-num">' + t.num + '</div><div class="tc-name">' + esc(t.name) + '</div>' +
+          (s.total ? '<div class="bar"><i style="width:' + s.pct + '%"></i></div><div class="tc-foot"><span>' + s.solved + '/' + s.total + ' solved</span>' +
+          '<span class="pill ' + s.status + '">' + { todo: 'Not started', prog: 'In progress', done: 'Done' }[s.status] + '</span></div>'
+          : '<div class="tc-foot"><span>Reading only, no problems</span></div>') + '</a>'; }).join('') +
+    '</div>';
+}
+
+function topicBody(t) {
+  const lines = t.md.split('\n').slice(1), out = [];
+  let inProb = false, inserted = false;
+  for (const l of lines) {
+    if (/^## /.test(l)) inProb = /^## Problems/.test(l);
+    if (inProb && l.trim().startsWith('|')) { if (!inserted) { out.push('<div id="prob-slot"></div>'); inserted = true; } continue; }
+    out.push(l);
+  }
+  return out.join('\n');
+}
+function viewTopic(id) {
+  const t = topicById[id];
+  if (!t) return '<div class="empty">Topic not found.</div>';
+  const s = topicStats(t), i = TOPICS.indexOf(t), prev = TOPICS[i - 1], next = TOPICS[i + 1];
+  return '<div class="topic-head"><div><div class="eyebrow">Topic ' + t.num + '</div><h1 class="page">' + esc(t.name) + '</h1></div>' +
+      '<div class="actions">' + (t.problems.length ? '<a class="btn" href="#/revise/pattern/' + t.id + '">Pattern drill</a>' : '') +
+      '<a class="btn" href="#/revise/template/' + t.id + '">Template recall</a></div></div>' +
+    (t.problems.length ? '<div class="topic-prog"><div class="bar"><i style="width:' + s.pct + '%"></i></div>' + s.solved + ' / ' + s.total + ' solved</div>' : '') +
+    '<article class="prose">' + md(topicBody(t)) + '</article>' +
+    '<div class="pager">' + (prev ? '<a href="#/topic/' + prev.id + '"><small>← Previous</small>' + esc(prev.name) + '</a>' : '<span></span>') +
+      (next ? '<a class="next" href="#/topic/' + next.id + '"><small>Next →</small>' + esc(next.name) + '</a>' : '<span></span>') + '</div>';
+}
+function afterTopic(id) {
+  const slot = $('#prob-slot'), t = topicById[id];
+  if (slot && t) slot.outerHTML = legend + probTable(t.problems, false);
+}
+
+let PF = { q: '', topic: 'all', diff: 'all', status: 'all', star: false };
+function viewProblems() {
+  const q = PF.q.toLowerCase();
+  const list = ALL.filter(p =>
+    (!q || (p.title + ' ' + p.pattern + ' ' + p.num).toLowerCase().includes(q)) &&
+    (PF.topic === 'all' || p.topic === PF.topic) &&
+    (PF.diff === 'all' || p.diff === PF.diff) &&
+    (!PF.star || p.star) &&
+    (PF.status === 'all' || (PF.status === 'unsolved' ? !isSolved(p) : PF.status === 'due' ? isDue(p) : lastResult(p) === PF.status)));
+  const opt = (v, l, cur) => '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + esc(l) + '</option>';
+  return '<div class="eyebrow">All topics</div><h1 class="page">Problems</h1><p class="sub">' + list.length + ' of ' + ALL.length + ' problems</p>' +
+    '<div class="filters">' +
+      '<input type="search" id="pf-q" placeholder="Search title, pattern or number…" value="' + esc(PF.q) + '">' +
+      '<select id="pf-topic">' + opt('all', 'All topics', PF.topic) + TOPICS.filter(t => t.problems.length).map(t => opt(t.id, t.num + ' · ' + t.name, PF.topic)).join('') + '</select>' +
+      '<select id="pf-diff">' + opt('all', 'Any difficulty', PF.diff) + opt('E', 'Easy', PF.diff) + opt('M', 'Medium', PF.diff) + opt('H', 'Hard', PF.diff) + '</select>' +
+      '<select id="pf-status">' + opt('all', 'Any status', PF.status) + opt('unsolved', 'Not solved yet', PF.status) + opt('due', 'Due for revision', PF.status) + opt('solved', 'Last: solved', PF.status) + opt('hint', 'Last: needed hint', PF.status) + opt('failed', 'Last: failed', PF.status) + '</select>' +
+      '<label class="chk"><input type="checkbox" id="pf-star"' + (PF.star ? ' checked' : '') + '> ★ frequent only</label>' +
+    '</div>' + legend + probTable(list, true);
+}
+
+/* --- revise --- */
+function templateChunks(t) {
+  const out = [];
+  Object.entries(t.sections).filter(([k]) => /^Templates?\b/.test(k)).forEach(([, body]) => {
+    for (const m of body.matchAll(/```(\w*)\n([\s\S]*?)```/g)) {
+      m[2].split(/\n\s*\n(?=#)/).forEach(chunk => {
+        const lines = chunk.replace(/\s+$/, '').split('\n');
+        if (lines.length < 2) return;
+        const hasTitle = lines[0].startsWith('#');
+        out.push({ title: hasTitle ? lines[0].replace(/^#\s*/, '') : lines[0].replace(/[:(].*$/, ''), code: (hasTitle ? lines.slice(1) : lines).join('\n'), lang: m[1] || 'python' });
+      });
+    }
+  });
+  return out;
+}
+function buildDeck(mode, scope) {
+  const ts = scope === 'all' ? TOPICS : [topicById[scope]].filter(Boolean);
+  let deck = [];
+  if (mode === 'pattern') {
+    ts.forEach(t => t.problems.forEach(p => deck.push({
+      id: 'p' + p.num, label: 'Which approach solves this?',
+      front: esc(p.title) + '<div class="sub2">#' + p.num + ' · <span class="diff d-' + p.diff + '">' + DIFF[p.diff] + '</span></div>',
+      back: '<div class="ans">' + esc(topicById[p.topic].name) + '</div><div>' + esc(p.pattern) + '</div><p><a href="' + esc(p.url) + '" target="_blank" rel="noopener">Open on LeetCode ↗</a></p>' })));
+  } else if (mode === 'signal') {
+    ts.forEach(t => (t.sections['When to use'] || '').split('\n').filter(l => /^- /.test(l)).forEach((l, i) => deck.push({
+      id: 's' + t.id + i, label: 'Which technique does this signal point to?',
+      front: md(l.slice(2)), back: '<div class="ans">' + esc(t.name) + '</div><p><a href="#/topic/' + t.id + '">Open topic →</a></p>' })));
+  } else if (mode === 'template') {
+    ts.forEach(t => templateChunks(t).forEach((c, i) => deck.push({
+      id: 't' + t.id + i, label: 'Write it from memory, then compare',
+      front: esc(c.title) + '<div class="sub2">' + esc(t.name) + '</div>',
+      back: '<pre><code class="language-' + esc(c.lang) + '">' + esc(c.code) + '</code></pre>' })));
+  }
+  // missed cards float to the top, the rest shuffled
+  const score = c => { const s = state.cards[c.id] || { r: 0, w: 0 }; return (s.w - s.r) + Math.random() * 2; };
+  return shuffle(deck).map(c => [score(c), c]).sort((a, b) => b[0] - a[0]).map(x => x[1]);
+}
+let RV = { key: '' };
+function viewRevise(mode, scope) {
+  mode = ['due', 'pattern', 'signal', 'template'].includes(mode) ? mode : 'due';
+  scope = scope && (scope === 'all' || topicById[scope]) ? scope : 'all';
+  const key = mode + '|' + scope;
+  if (RV.key !== key) RV = { key, mode, scope, deck: mode === 'due' ? [] : buildDeck(mode, scope), i: 0, shown: false, right: 0, wrong: 0 };
+  const dueCount = ALL.filter(isDue).length;
+  const tab = (m, l) => '<a class="' + (m === mode ? 'active' : '') + '" href="#/revise/' + m + '/' + scope + '">' + l + '</a>';
+  let html = '<div class="eyebrow">Revise</div><h1 class="page">Revision</h1><p class="sub">Spaced repetition for problems, plus flashcards for recognising patterns and recalling templates.</p>' +
+    '<div class="revbar"><div class="tabs">' + tab('due', 'Due (' + dueCount + ')') + tab('pattern', 'Pattern drill') + tab('signal', 'Spot the technique') + tab('template', 'Template recall') + '</div>' +
+    '<select id="rv-scope"><option value="all">All topics</option>' + TOPICS.map(t => '<option value="' + t.id + '"' + (t.id === scope ? ' selected' : '') + '>' + t.num + ' · ' + esc(t.name) + '</option>').join('') + '</select></div>';
+
+  if (mode === 'due') {
+    const due = ALL.filter(p => isDue(p) && (scope === 'all' || p.topic === scope));
+    const upcoming = ALL.filter(p => pst(p) && pst(p).next && !isDue(p)).sort((a, b) => pst(a).next.localeCompare(pst(b).next));
+    html += due.length ? '<p class="muted">Re-solve each problem from scratch without looking at your old code, then log how it went.</p>' + legend + probTable(due, true)
+      : '<div class="panel empty"><div class="big">✨</div>Nothing due right now.' + (upcoming.length ? '<br>Next up: <b>' + esc(upcoming[0].title) + '</b> ' + relDay(pst(upcoming[0]).next) + '.' : '<br>Log some attempts on a topic page and they\'ll show up here.') + '</div>';
+    return html;
+  }
+  if (!RV.deck.length) return html + '<div class="panel empty">No cards for this selection.</div>';
+  if (RV.i >= RV.deck.length) {
+    return html + '<div class="card empty"><div class="big">🏁</div><b>Deck finished</b><p>' + RV.right + ' got it · ' + RV.wrong + ' missed</p><button class="btn primary" id="rv-again">Shuffle & go again</button></div>';
+  }
+  const c = RV.deck[RV.i];
+  return html + '<div class="card"><div class="card-meta"><span>Card ' + (RV.i + 1) + ' / ' + RV.deck.length + '</span><span>✓ ' + RV.right + ' · ✗ ' + RV.wrong + '</span></div>' +
+    '<div class="card-label">' + c.label + '</div><div class="card-front">' + c.front + '</div>' +
+    (RV.shown ? '<div class="card-back">' + c.back + '</div>' : '') +
+    '<div class="card-actions">' + (RV.shown
+      ? '<button class="btn good" data-rate="1">Got it<kbd>1</kbd></button><button class="btn bad" data-rate="0">Missed<kbd>2</kbd></button>'
+      : '<button class="btn primary" id="rv-reveal">Reveal<kbd>Space</kbd></button>') +
+    '<button class="btn" id="rv-skip">Skip</button></div></div>';
+}
+function rate(good) {
+  const c = RV.deck[RV.i], s = state.cards[c.id] ||= { r: 0, w: 0 };
+  good ? (s.r++, RV.right++) : (s.w++, RV.wrong++);
+  bump(); save();
+  RV.i++; RV.shown = false; render();
+}
+
+function viewTemplates() {
+  return '<div class="eyebrow">Cheat sheet</div><h1 class="page">Templates</h1><p class="sub">Every code template on one page. Read through it before an interview.</p>' +
+    '<div class="filters"><input type="search" id="tpl-q" placeholder="Filter topics…"></div>' +
+    TOPICS.map(t => {
+      const keys = Object.keys(t.sections).filter(k => /^(Templates?|Core tricks|Constraint|Common (1D|2D) shapes)/.test(k));
+      if (!keys.length) return '';
+      return '<section class="tpl-sec prose" data-name="' + esc(t.name.toLowerCase()) + '"><h2><a href="#/topic/' + t.id + '">' + t.num + ' · ' + esc(t.name) + '</a></h2>' +
+        keys.map(k => (keys.length > 1 ? '<h3>' + esc(k) + '</h3>' : '') + md(t.sections[k])).join('') + '</section>';
+    }).join('');
+}
+function viewGuide() { return '<div class="eyebrow">README</div><article class="prose" style="margin-top:-8px">' + md(DATA.readme.replace(/^# .*\n/, '# DSA Prep\n')).replace('<h1', '<h1 class="page" style="display:block"') + '</article>'; }
+
+/* ---------- sidebar ---------- */
+function renderSidebar(view, arg) {
+  const due = ALL.filter(isDue).length;
+  const nav = (href, label, v, extra = '') => '<a href="' + href + '" class="' + (view === v ? 'active' : '') + '">' + label + extra + '</a>';
+  $('#sidebar').innerHTML = '<div class="brand"><span class="logo">{ }</span>DSA Prep</div>' +
+    '<nav class="nav">' + nav('#/', '📊 Dashboard', 'dashboard') + nav('#/revise/due/all', '🔁 Revise', 'revise', due ? '<span class="badge">' + due + '</span>' : '') +
+      nav('#/problems', '📋 Problems', 'problems') + nav('#/templates', '🧩 Templates', 'templates') + nav('#/guide', '📖 Guide', 'guide') + '</nav>' +
+    '<div><div class="side-label">Topics</div><div class="nav">' + TOPICS.map(t => { const s = topicStats(t);
+      return '<a class="topic-link ' + (view === 'topic' && arg === t.id ? 'active ' : '') + (s.status === 'done' ? 'done' : '') + '" href="#/topic/' + t.id + '"><span class="tnum">' + t.num + '</span><span class="tname">' + esc(t.name.replace('Dynamic Programming', 'DP')) + '</span>' +
+        (s.total ? '<span class="tprog">' + s.solved + '/' + s.total + '</span>' : '') + '</a>'; }).join('') + '</div></div>' +
+    '<div class="side-foot"><button class="btn sm" id="theme">◐ Theme</button><button class="btn sm" id="hidepat">' + (state.settings.hidePatterns ? '👁 Show' : '🙈 Hide') + ' patterns</button>' +
+      '<button class="btn sm" id="export">Export</button><button class="btn sm" id="import">Import</button></div>';
+}
+
+/* ---------- router ---------- */
+let lastRoute = '';
+function render() {
+  const route = location.hash.replace(/^#\/?/, '');
+  const [view = 'dashboard', a, b] = route.split('/').filter(Boolean);
+  const same = route === lastRoute, y = window.scrollY;
+  lastRoute = route;
+  const main = $('#main');
+  const v = view || 'dashboard';
+  main.innerHTML = v === 'topic' ? viewTopic(a) : v === 'problems' ? viewProblems() : v === 'revise' ? viewRevise(a, b)
+    : v === 'templates' ? viewTemplates() : v === 'guide' ? viewGuide() : viewDashboard();
+  if (v === 'topic') afterTopic(a);
+  enhance(main);
+  renderSidebar(['topic', 'problems', 'revise', 'templates', 'guide'].includes(v) ? v : 'dashboard', a);
+  document.body.classList.remove('nav-open');
+  window.scrollTo(0, same ? y : 0);
+}
+function enhance(el) {
+  if (window.hljs) el.querySelectorAll('pre code').forEach(c => hljs.highlightElement(c));
+  el.querySelectorAll('a[href]').forEach(a => {
+    const h = a.getAttribute('href');
+    if (/^https?:/.test(h)) { a.target = '_blank'; a.rel = 'noopener'; }
+    else if (/^[\w-]+\.md$/.test(h)) a.setAttribute('href', '#/topic/' + h.replace(/\.md$/, ''));
+  });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const act = e.target.closest('[data-act]');
+  if (act) {
+    const num = +act.closest('[data-num]').dataset.num;
+    if (act.dataset.act === 'reset') { if (!confirm('Clear the history for #' + num + '?')) return; delete state.problems[num]; }
+    else logAttempt(num, act.dataset.act);
+    save(); render(); return;
+  }
+  const pat = e.target.closest('td.pattern.blur');
+  if (pat) { pat.classList.toggle('peek'); return; }
+  const r = e.target.closest('[data-rate]');
+  if (r) { rate(r.dataset.rate === '1'); return; }
+  const id = e.target.closest('button') && e.target.closest('button').id;
+  if (id === 'rv-reveal') { RV.shown = true; render(); }
+  else if (id === 'rv-skip') { RV.i++; RV.shown = false; render(); }
+  else if (id === 'rv-again') { RV.key = ''; render(); }
+  else if (id === 'menu') document.body.classList.toggle('nav-open');
+  else if (id === 'theme') {
+    const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    state.settings.theme = dark ? 'light' : 'dark'; applyTheme(); save();
+  }
+  else if (id === 'hidepat') { state.settings.hidePatterns = !state.settings.hidePatterns; save(); render(); }
+  else if (id === 'export') {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dsa-progress-' + today() + '.json'; a.click();
+  }
+  else if (id === 'import') $('#importFile').click();
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'pf-q') { PF.q = t.value; const pos = t.selectionStart; render(); const n = $('#pf-q'); n.focus(); n.setSelectionRange(pos, pos); }
+  if (t.id === 'tpl-q') { const q = t.value.toLowerCase(); document.querySelectorAll('.tpl-sec').forEach(s => s.style.display = s.dataset.name.includes(q) ? '' : 'none'); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'pf-topic') PF.topic = t.value; else if (t.id === 'pf-diff') PF.diff = t.value;
+  else if (t.id === 'pf-status') PF.status = t.value; else if (t.id === 'pf-star') PF.star = t.checked;
+  else if (t.id === 'rv-scope') { location.hash = '#/revise/' + (RV.mode || 'due') + '/' + t.value; return; }
+  else if (t.id === 'importFile') {
+    const f = t.files[0]; if (!f) return;
+    f.text().then(txt => { try { state = JSON.parse(txt); norm(); save(); RV.key = ''; render(); alert('Progress imported.'); } catch (err) { alert('That file is not valid progress JSON.'); } });
+    t.value = ''; return;
+  } else return;
+  render();
+});
+document.addEventListener('keydown', e => {
+  if (/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName) || !location.hash.startsWith('#/revise/') || RV.mode === 'due') return;
+  if (e.code === 'Space' && !RV.shown && RV.i < RV.deck.length) { e.preventDefault(); RV.shown = true; render(); }
+  else if (RV.shown && e.key === '1') rate(true);
+  else if (RV.shown && e.key === '2') rate(false);
+});
+function applyTheme() { if (state.settings.theme) document.documentElement.dataset.theme = state.settings.theme; }
+window.addEventListener('hashchange', render);
+applyTheme();
+render();
+</script>
+</body>
+</html>

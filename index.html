@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root {
+  --bg:#f6f6f3; --panel:#ffffff; --panel-2:#efefea; --text:#1c1c1f; --muted:#6b6b72; --border:#e2e2dc;
+  --accent:#4f46e5; --accent-soft:#ecebff; --accent-text:#ffffff;
+  --easy:#15803d; --med:#b45309; --hard:#b91c1c;
+  --ok-bg:#dcfce7; --hint-bg:#fef3c7; --fail-bg:#fee2e2;
+  --code-bg:#f3f3ef; --heat-0:#e8e8e2; --heat-1:#c7c4ff; --heat-2:#9f9aff; --heat-3:#6e66f0; --heat-4:#4338ca;
+  --tok-kw:#7c3aed; --tok-str:#15803d; --tok-com:#8a8a90; --tok-num:#c2410c; --tok-fn:#2563eb;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0f1115; --panel:#171a21; --panel-2:#1f232c; --text:#e7e7ea; --muted:#9a9aa6; --border:#2a2f3a;
+    --accent:#8b8cff; --accent-soft:#25274a; --accent-text:#0f1115;
+    --easy:#4ade80; --med:#fbbf24; --hard:#f87171;
+    --ok-bg:#143620; --hint-bg:#3a2e0e; --fail-bg:#3d1717;
+    --code-bg:#12151b; --heat-0:#1f232c; --heat-1:#2e3170; --heat-2:#4247a8; --heat-3:#6366f1; --heat-4:#a5a6ff;
+    --tok-kw:#c4a7ff; --tok-str:#86efac; --tok-com:#6b7280; --tok-num:#fdba74; --tok-fn:#93c5fd;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0f1115; --panel:#171a21; --panel-2:#1f232c; --text:#e7e7ea; --muted:#9a9aa6; --border:#2a2f3a;
+  --accent:#8b8cff; --accent-soft:#25274a; --accent-text:#0f1115;
+  --easy:#4ade80; --med:#fbbf24; --hard:#f87171;
+  --ok-bg:#143620; --hint-bg:#3a2e0e; --fail-bg:#3d1717;
+  --code-bg:#12151b; --heat-0:#1f232c; --heat-1:#2e3170; --heat-2:#4247a8; --heat-3:#6366f1; --heat-4:#a5a6ff;
+  --tok-kw:#c4a7ff; --tok-str:#86efac; --tok-com:#6b7280; --tok-num:#fdba74; --tok-fn:#93c5fd;
+  --shadow:none;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; }
+body { background:var(--bg); color:var(--text); font:15px/1.6 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+button { font:inherit; color:inherit; cursor:pointer; }
+code, pre { font-family:"JetBrains Mono", ui-monospace, Menlo, monospace; }
+
+/* Layout */
+.layout { display:grid; grid-template-columns:268px minmax(0,1fr); min-height:100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--panel); border-right:1px solid var(--border); padding:20px 14px; display:flex; flex-direction:column; gap:18px; }
+.main { padding:32px 40px 80px; max-width:1040px; width:100%; min-width:0; }
+.brand { font-weight:700; font-size:18px; padding:0 8px; display:flex; align-items:center; gap:8px; }
+.brand .logo { width:26px; height:26px; border-radius:7px; background:var(--accent); color:var(--accent-text); display:grid; place-items:center; font-size:13px; }
+.nav { display:flex; flex-direction:column; gap:2px; }
+.nav a, .topic-link { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; color:var(--text); font-size:14px; }
+.nav a:hover, .topic-link:hover { background:var(--panel-2); text-decoration:none; }
+.nav a.active, .topic-link.active { background:var(--accent-soft); color:var(--accent); font-weight:600; }
+.badge { margin-left:auto; background:var(--accent); color:var(--accent-text); border-radius:999px; font-size:11px; padding:1px 8px; font-weight:600; }
+.side-label { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); padding:0 10px; margin-bottom:4px; font-weight:600; }
+.topic-link { font-size:13.5px; }
+.topic-link .tnum { color:var(--muted); font-variant-numeric:tabular-nums; width:18px; flex:none; }
+.topic-link .tname { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.topic-link .tprog { font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; }
+.topic-link.done .tprog { color:var(--easy); font-weight:600; }
+.side-foot { margin-top:auto; display:flex; flex-wrap:wrap; gap:6px; padding-top:12px; border-top:1px solid var(--border); }
+.btn { border:1px solid var(--border); background:var(--panel); border-radius:8px; padding:6px 12px; font-size:13px; }
+.btn:hover { background:var(--panel-2); }
+.btn.primary { background:var(--accent); color:var(--accent-text); border-color:var(--accent); font-weight:600; }
+.btn.primary:hover { filter:brightness(1.08); }
+.btn.sm { padding:4px 9px; font-size:12px; }
+.topbar { display:none; }
+
+/* Headings */
+.eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; }
+h1.page { font-size:30px; margin:4px 0 6px; letter-spacing:-.02em; }
+.sub { color:var(--muted); margin:0 0 24px; }
+
+/* Cards & stats */
+.grid { display:grid; gap:14px; }
+.stats { grid-template-columns:repeat(4, minmax(0,1fr)); margin-bottom:22px; }
+.panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow); min-width:0; }
+.stat .v { font-size:28px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.stat .l { color:var(--muted); font-size:13px; }
+.bar { height:6px; background:var(--panel-2); border-radius:99px; overflow:hidden; }
+.bar > i { display:block; height:100%; background:var(--accent); border-radius:99px; }
+.two { grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); margin-bottom:22px; }
+.panel h3 { margin:0 0 12px; font-size:15px; }
+.diffrow { display:grid; grid-template-columns:64px minmax(0,1fr) 56px; align-items:center; gap:10px; margin:8px 0; font-size:13px; }
+.diffrow .n { text-align:right; color:var(--muted); font-variant-numeric:tabular-nums; }
+.topics-grid { grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); }
+.tcard { display:block; color:var(--text); }
+.tcard:hover { text-decoration:none; border-color:var(--accent); }
+.tcard .tc-num { font-size:12px; color:var(--muted); font-weight:600; }
+.tcard .tc-name { font-weight:600; margin:2px 0 10px; }
+.tcard .tc-foot { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px; }
+.pill { font-size:11px; padding:1px 8px; border-radius:99px; background:var(--panel-2); color:var(--muted); font-weight:600; }
+.pill.prog { background:var(--hint-bg); color:var(--med); }
+.pill.done { background:var(--ok-bg); color:var(--easy); }
+
+/* Heatmap */
+.heat { display:grid; grid-template-rows:repeat(7, 12px); grid-auto-flow:column; grid-auto-columns:12px; gap:3px; overflow-x:auto; padding-bottom:4px; }
+.heat i { border-radius:3px; background:var(--heat-0); }
+.heat i.l1 { background:var(--heat-1); } .heat i.l2 { background:var(--heat-2); } .heat i.l3 { background:var(--heat-3); } .heat i.l4 { background:var(--heat-4); }
+.heat i.future { background:transparent; }
+
+/* Problem tables */
+.tablewrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:var(--panel); }
+table.probs { width:100%; border-collapse:collapse; font-size:14px; }
+table.probs th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+table.probs td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+table.probs tr:last-child td { border-bottom:none; }
+table.probs tr.r-solved { background:color-mix(in srgb, var(--ok-bg) 45%, transparent); }
+table.probs tr.r-hint { background:color-mix(in srgb, var(--hint-bg) 45%, transparent); }
+table.probs tr.r-failed { background:color-mix(in srgb, var(--fail-bg) 45%, transparent); }
+td.num { color:var(--muted); font-variant-numeric:tabular-nums; width:52px; }
+td.meta { color:var(--muted); font-size:12px; white-space:nowrap; }
+td.pattern { color:var(--muted); font-size:13px; }
+td.pattern.blur { filter:blur(5px); cursor:pointer; user-select:none; transition:filter .15s; }
+td.pattern.blur.peek { filter:none; }
+.dot { width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--border); }
+.dot.solved { background:var(--easy); } .dot.hint { background:var(--med); } .dot.failed { background:var(--hard); }
+.diff { font-size:12px; font-weight:600; }
+.d-E { color:var(--easy); } .d-M { color:var(--med); } .d-H { color:var(--hard); }
+.tag { font-size:12px; }
+.tag.star { color:var(--med); }
+td.acts { white-space:nowrap; text-align:right; }
+td.acts button { width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--panel); margin-left:3px; font-size:13px; font-weight:600; }
+td.acts button[data-act="solved"]:hover { background:var(--ok-bg); color:var(--easy); border-color:var(--easy); }
+td.acts button[data-act="hint"]:hover { background:var(--hint-bg); color:var(--med); border-color:var(--med); }
+td.acts button[data-act="failed"]:hover { background:var(--fail-bg); color:var(--hard); border-color:var(--hard); }
+td.acts button[data-act="reset"] { color:var(--muted); }
+.legend { display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--muted); margin:8px 0 10px; }
+
+/* Filters */
+.filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center; }
+input[type=search], select { font:inherit; font-size:14px; padding:7px 10px; border-radius:8px; border:1px solid var(--border); background:var(--panel); color:var(--text); }
+input[type=search] { flex:1; min-width:180px; }
+label.chk { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+
+/* Prose (rendered markdown) */
+.prose { min-width:0; }
+.prose h1 { display:none; }
+.prose h2 { font-size:20px; margin:34px 0 10px; padding-top:6px; letter-spacing:-.01em; }
+.prose h3 { font-size:16px; margin:22px 0 8px; }
+.prose blockquote { margin:0 0 16px; padding:10px 14px; background:var(--accent-soft); border-radius:10px; color:var(--text); border:none; }
+.prose blockquote p { margin:0; }
+.prose ul, .prose ol { padding-left:22px; }
+.prose li { margin:3px 0; }
+.prose :not(pre) > code { background:var(--code-bg); border:1px solid var(--border); padding:1px 5px; border-radius:5px; font-size:.86em; }
+.prose pre, .card-back pre { background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+.prose pre code { background:none; padding:0; }
+.prose table { border-collapse:collapse; width:100%; font-size:14px; display:block; overflow-x:auto; }
+.prose th, .prose td { border:1px solid var(--border); padding:7px 10px; text-align:left; }
+.prose th { background:var(--panel-2); font-size:13px; }
+.hljs { background:none; color:var(--text); }
+.hljs-keyword, .hljs-built_in, .hljs-meta { color:var(--tok-kw); }
+.hljs-string { color:var(--tok-str); }
+.hljs-comment { color:var(--tok-com); font-style:italic; }
+.hljs-number, .hljs-literal { color:var(--tok-num); }
+.hljs-title, .hljs-title.function_, .hljs-title.class_ { color:var(--tok-fn); }
+
+.topic-head { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between; margin-bottom:18px; }
+.topic-head .actions { display:flex; gap:8px; flex-wrap:wrap; }
+.topic-prog { display:flex; align-items:center; gap:12px; font-size:13px; color:var(--muted); margin-bottom:22px; }
+.topic-prog .bar { flex:1; max-width:340px; }
+.pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px; }
+.pager a { flex:1; border:1px solid var(--border); border-radius:12px; padding:12px 16px; background:var(--panel); color:var(--text); }
+.pager a:hover { border-color:var(--accent); text-decoration:none; }
+.pager a small { display:block; color:var(--muted); font-size:12px; }
+.pager a.next { text-align:right; }
+
+/* Revise */
+.tabs { display:flex; gap:4px; background:var(--panel-2); padding:4px; border-radius:10px; flex-wrap:wrap; }
+.tabs a { padding:6px 14px; border-radius:7px; color:var(--muted); font-size:14px; font-weight:500; }
+.tabs a:hover { text-decoration:none; color:var(--text); }
+.tabs a.active { background:var(--panel); color:var(--text); box-shadow:var(--shadow); }
+.revbar { display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.card { background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:var(--shadow); max-width:760px; }
+.card-meta { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:16px; }
+.card-label { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:600; margin-bottom:8px; }
+.card-front { font-size:20px; font-weight:600; line-height:1.45; }
+.card-front p { margin:0; }
+.card-front .sub2 { font-size:14px; color:var(--muted); font-weight:400; margin-top:6px; }
+.card-back { margin-top:20px; padding-top:20px; border-top:1px dashed var(--border); }
+.card-back .ans { font-size:18px; font-weight:700; color:var(--accent); }
+.card-actions { display:flex; gap:10px; margin-top:24px; flex-wrap:wrap; }
+.card-actions .btn { padding:9px 18px; font-size:14px; }
+.btn.good { background:var(--ok-bg); color:var(--easy); border-color:transparent; font-weight:600; }
+.btn.bad { background:var(--fail-bg); color:var(--hard); border-color:transparent; font-weight:600; }
+kbd { font-family:"JetBrains Mono", monospace; font-size:11px; border:1px solid var(--border); border-bottom-width:2px; border-radius:4px; padding:0 5px; margin-left:6px; opacity:.75; }
+.empty { text-align:center; padding:40px 20px; color:var(--muted); }
+.empty .big { font-size:36px; margin-bottom:6px; }
+.nextup li { margin:6px 0; }
+.muted { color:var(--muted); }
+.section-gap { margin-top:28px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns:minmax(0,1fr); }
+  .sidebar { position:fixed; left:0; top:0; z-index:20; width:280px; transform:translateX(-100%); transition:transform .2s; box-shadow:0 0 40px rgba(0,0,0,.25); }
+  body.nav-open .sidebar { transform:none; }
+  .topbar { display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:10; background:var(--panel); border-bottom:1px solid var(--border); padding:10px 16px; font-weight:700; }
+  .main { padding:20px 16px 60px; }
+  .stats { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .two { grid-template-columns:minmax(0,1fr); }
+  .card { padding:20px; }
+  td.meta, th.meta { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="topbar"><button class="btn sm" id="menu">☰</button> DSA Prep</div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+<input type="file" id="importFile" accept="application/json" hidden>
+<script>
+const DATA = {"topics": [{"id": "00-Complexity-Analysis", "file": "00-Complexity-Analysis.md", "title": "00 · Complexity Analysis", "md": "# 00 · Complexity Analysis\n\n> **Goal:** be able to state the time and space complexity of any solution right away, and use the constraints to work out which complexity is expected.\n\n## Core concepts\n\n- **Big-O** gives an upper bound on growth. Drop constants and lower-order terms: `O(3n² + n)` becomes `O(n²)`.\n- **Time complexity** counts the dominant operations as the input size grows.\n- **Space complexity** counts the extra memory used, *including the recursion stack*.\n- **Amortized complexity** is the average cost over a sequence of operations. Appending to a dynamic array is amortized `O(1)` even though an occasional resize costs `O(n)`.\n- **Best, average and worst case.** Quicksort is `O(n log n)` on average and `O(n²)` in the worst case. Hash maps are `O(1)` on average and `O(n)` in the worst case.\n\n## Common complexities (fastest to slowest)\n\n| Complexity | Typical source |\n|------------|----------------|\n| O(1) | Hash lookup, array index |\n| O(log n) | Binary search, operations on a balanced tree or heap |\n| O(n) | Single pass over the input |\n| O(n log n) | Sorting, n heap operations |\n| O(n²) | Nested loops, 2D DP over n×n |\n| O(2ⁿ) | Subsets, naive recursion |\n| O(n!) | Permutations |\n\n## Constraint → target complexity (very useful)\n\nA computer does roughly 10⁸ simple operations per second. Use n to work out which approach is expected:\n\n| n up to | Target | Likely approach |\n|---------|--------|-----------------|\n| ≤ 10–12 | O(n!) | Permutations, brute force |\n| ≤ 20–25 | O(2ⁿ) | Subsets, bitmask, backtracking |\n| ≤ 500 | O(n³) | Interval DP, Floyd–Warshall |\n| ≤ 5,000 | O(n²) | 2D DP, nested loops |\n| ≤ 10⁵ – 10⁶ | O(n log n) / O(n) | Sort, heap, binary search, two pointers, hashing |\n| ≥ 10⁹ | O(log n) / O(1) | Binary search on the answer, math |\n\n## Recursion complexity\n\n- **Time** = (number of calls) × (work per call). For a recursion tree, multiply the branching factor raised to the depth by the work done at each node.\n- **Space** = maximum recursion depth plus any extra structures.\n- **Master theorem (quick version):** `T(n) = aT(n/b) + O(n^d)`\n  - if `d > log_b a`, the answer is `O(n^d)`\n  - if `d = log_b a`, the answer is `O(n^d log n)`. Merge sort is `2T(n/2)+O(n)`, which gives `O(n log n)`.\n  - if `d < log_b a`, the answer is `O(n^(log_b a))`\n\n## Built-in operation costs (Python)\n\n| Operation | Cost |\n|-----------|------|\n| `list.append`, `list.pop()` | O(1) |\n| `list.pop(0)`, `list.insert(0, x)`, `x in list` | O(n). Use `collections.deque` instead. |\n| `dict` / `set` get, set, `in` | O(1) average |\n| `sorted()` / `.sort()` | O(n log n) |\n| `heapq.heappush` / `heappop` | O(log n) |\n| `heapq.heapify` | O(n) |\n| String concatenation in a loop | O(n²) overall. Use `''.join(parts)`. |\n| Slicing `a[i:j]` | O(j - i) |\n\n## Pitfalls\n\n- Forgetting to count recursion stack space.\n- Calling `x in list` inside a loop, which silently makes it O(n²).\n- Treating string slicing or copying as O(1).\n- Using sorting when O(n) is expected.\n\n## Practice\n\nThere are no specific problems for this topic. State the complexity of every problem you solve in the other topics.\n\n## My Notes\n\n-\n"}, {"id": "01-Arrays-and-Hashing", "file": "01-Arrays-and-Hashing.md", "title": "01 · Arrays & Hashing", "md": "# 01 · Arrays & Hashing\n\n> **Prereqs:** 00 · **Time:** 4–5 days\n\n## When to use\n\n- \"Have I seen this before?\", \"count occurrences\", \"find the pair or complement\": use a **hash map or set**.\n- \"Sum or count of a subarray\": use **prefix sums**, often combined with a hash map.\n- Grouping items by a property (anagrams, for example): use a **hash map with a canonical key**.\n- Values in the range `1..n`: use **index as hash**, either cyclic sort or sign marking.\n\n## Core concepts\n\n- **Hash map**: average O(1) insert and lookup. Keys must be hashable, so use a `tuple` rather than a `list`.\n- **Frequency counting**: `collections.Counter` or an array of 26 counts for lowercase letters.\n- **Prefix sum**: `pre[i] = a[0] + ... + a[i-1]`, so `sum(a[l..r]) = pre[r+1] - pre[l]`.\n- **Kadane's algorithm**: best subarray ending at i = `max(a[i], best_ending_at_{i-1} + a[i])`.\n- **Bucket sort**: sorts in O(n) when the values are bounded (for example, by frequency ≤ n).\n\n## Templates\n\n```python\n# Complement lookup (Two Sum)\nseen = {}\nfor i, x in enumerate(nums):\n    if target - x in seen:\n        return [seen[target - x], i]\n    seen[x] = i\n\n# Prefix sum + hashmap: count subarrays with sum == k\ncount, cur = 0, 0\npref = {0: 1}\nfor x in nums:\n    cur += x\n    count += pref.get(cur - k, 0)\n    pref[cur] = pref.get(cur, 0) + 1\n\n# Kadane\nbest = cur = nums[0]\nfor x in nums[1:]:\n    cur = max(x, cur + x)\n    best = max(best, cur)\n\n# Canonical key grouping\ngroups = defaultdict(list)\nfor w in words:\n    key = tuple(sorted(w))   # or a 26-count tuple\n    groups[key].append(w)\n```\n\n## Pitfalls\n\n- Prefix-sum map: forgetting to seed it with `{0: 1}`.\n- Using a list as a dictionary key. It must be a tuple.\n- Mutating a list while iterating over it.\n- Negative numbers break the \"shrink the window\" approach. Use prefix sums instead.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 217 | [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/) | E | Set |\n| [ ] | 242 | [Valid Anagram](https://leetcode.com/problems/valid-anagram/) | E | Counting |\n| [ ] | 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | E | Complement map |\n| [ ] | 303 | [Range Sum Query - Immutable](https://leetcode.com/problems/range-sum-query-immutable/) | E | Prefix sum |\n| [ ] | 49 | [Group Anagrams](https://leetcode.com/problems/group-anagrams/) | M | Canonical key |\n| [ ] | 347 | [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) | M | Bucket sort / heap |\n| [ ] | 238 | [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/) | M | Prefix & suffix |\n| [ ] | 36 | [Valid Sudoku](https://leetcode.com/problems/valid-sudoku/) | M | Sets per row/col/box |\n| [ ] | 271 | [Encode and Decode Strings](https://leetcode.com/problems/encode-and-decode-strings/) 🔒 | M | Length prefix |\n| [ ] | 128 | [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/) | M | Set, start of sequence |\n| [ ] | 53 | [Maximum Subarray](https://leetcode.com/problems/maximum-subarray/) | M | Kadane |\n| [ ] | 560 | [Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/) | M | Prefix sum + map |\n| [ ] | 75 | [Sort Colors](https://leetcode.com/problems/sort-colors/) | M | Dutch national flag |\n| [ ] | 41 | [First Missing Positive](https://leetcode.com/problems/first-missing-positive/) | H | Index as hash |\n\n🔒 = requires LeetCode Premium (the same problem is free on NeetCode or LintCode).\n\n## My Notes\n\n-\n"}, {"id": "02-Two-Pointers", "file": "02-Two-Pointers.md", "title": "02 · Two Pointers", "md": "# 02 · Two Pointers\n\n> **Prereqs:** 01 · **Time:** 2–3 days\n\n## When to use\n\n- The input is **sorted**, or sorting it doesn't break the problem, and you're looking for a pair or triplet with a target sum.\n- Palindrome checks, or comparing from both ends.\n- **In-place** array changes such as removing elements, deduplicating or partitioning.\n- Merging two sorted sequences.\n\n## Core concepts\n\n- **Opposite ends**: `l = 0, r = n - 1`, then move the pointers inward based on a comparison.\n- **Same direction (fast/slow, read/write)**: one pointer reads every element and the other marks where the next valid element is written.\n- **Reducing k-Sum**: sort, fix one element, then run two-sum on the rest. 3Sum is O(n²) and 4Sum is O(n³).\n\n## Templates\n\n```python\n# Opposite ends on a sorted array\nl, r = 0, len(a) - 1\nwhile l < r:\n    s = a[l] + a[r]\n    if s == target: return [l, r]\n    if s < target: l += 1\n    else: r -= 1\n\n# Read/write pointer (in-place filter)\nw = 0\nfor x in nums:\n    if keep(x):\n        nums[w] = x\n        w += 1\nreturn w\n\n# 3Sum skeleton with duplicate skipping\nnums.sort()\nfor i in range(len(nums)):\n    if i and nums[i] == nums[i-1]: continue\n    l, r = i + 1, len(nums) - 1\n    while l < r:\n        s = nums[i] + nums[l] + nums[r]\n        if s < 0: l += 1\n        elif s > 0: r -= 1\n        else:\n            res.append([nums[i], nums[l], nums[r]])\n            l += 1\n            while l < r and nums[l] == nums[l-1]: l += 1\n```\n\n## Pitfalls\n\n- Not skipping duplicates in 3Sum or 4Sum.\n- Using `l <= r` when the two pointers must point at different elements.\n- Sorting when you need to return the original indices.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 125 | [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | E | Opposite ends |\n| [ ] | 283 | [Move Zeroes](https://leetcode.com/problems/move-zeroes/) | E | Read/write |\n| [ ] | 26 | [Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) | E | Read/write |\n| [ ] | 88 | [Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/) | E | Fill from the back |\n| [ ] | 167 | [Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | M | Opposite ends |\n| [ ] | 15 | [3Sum](https://leetcode.com/problems/3sum/) | M | Sort + fix + 2ptr |\n| [ ] | 11 | [Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | M | Move the shorter side |\n| [ ] | 18 | [4Sum](https://leetcode.com/problems/4sum/) | M | k-Sum reduction |\n| [ ] | 42 | [Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/) | H | Left/right max |\n\n## My Notes\n\n-\n"}, {"id": "03-Sliding-Window", "file": "03-Sliding-Window.md", "title": "03 · Sliding Window", "md": "# 03 · Sliding Window\n\n> **Prereqs:** 01, 02 · **Time:** 3–4 days\n\n## When to use\n\n- The problem asks for the longest, shortest or count of **contiguous** subarrays or substrings that satisfy a condition.\n- The condition is **monotonic**: if a window is valid, so are its sub-windows (or it only becomes invalid as it grows).\n- A window of fixed size k.\n\n## Core concepts\n\n- **Fixed window**: add `a[r]`, remove `a[r-k]`.\n- **Variable window**: expand `r` every step and shrink `l` while the window is invalid.\n- Keep the window's state up to date incrementally with a counter, sum or set.\n- **\"Exactly K\" = atMost(K) − atMost(K−1).**\n- Sliding window maximum: use a **monotonic deque**.\n- ⚠️ Sliding window doesn't work with **negative numbers** for sum conditions. Use prefix sums instead.\n\n## Templates\n\n```python\n# Variable window: longest valid\nl = 0\nstate = defaultdict(int)\nbest = 0\nfor r, x in enumerate(s):\n    state[x] += 1\n    while not valid(state):\n        state[s[l]] -= 1\n        l += 1\n    best = max(best, r - l + 1)\n\n# Variable window: shortest valid\nl, best = 0, float('inf')\nfor r in range(len(a)):\n    add(a[r])\n    while valid():\n        best = min(best, r - l + 1)\n        remove(a[l]); l += 1\n\n# Monotonic deque for window max\ndq = deque()  # indices, values decreasing\nfor i, x in enumerate(nums):\n    while dq and nums[dq[-1]] <= x: dq.pop()\n    dq.append(i)\n    if dq[0] <= i - k: dq.popleft()\n    if i >= k - 1: res.append(nums[dq[0]])\n```\n\n## Pitfalls\n\n- Updating the answer at the wrong point. For \"longest\", update after shrinking. For \"shortest\", update while shrinking.\n- Forgetting to delete counter keys that reach 0 when you rely on `len(state)`.\n- Off-by-one errors in the window length `r - l + 1`.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 121 | [Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) | E | Track the minimum so far |\n| [ ] | 3 | [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | M | Variable, set |\n| [ ] | 424 | [Longest Repeating Character Replacement](https://leetcode.com/problems/longest-repeating-character-replacement/) | M | len − maxfreq ≤ k |\n| [ ] | 567 | [Permutation in String](https://leetcode.com/problems/permutation-in-string/) | M | Fixed, counts |\n| [ ] | 438 | [Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/) | M | Fixed, counts |\n| [ ] | 209 | [Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/) | M | Shortest valid |\n| [ ] | 1004 | [Max Consecutive Ones III](https://leetcode.com/problems/max-consecutive-ones-iii/) | M | At most k zeros |\n| [ ] | 76 | [Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/) | H | Shortest valid, \"have\" vs \"need\" counts |\n| [ ] | 239 | [Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/) | H | Monotonic deque |\n| [ ] | 992 | [Subarrays with K Different Integers](https://leetcode.com/problems/subarrays-with-k-different-integers/) | H | atMost(K) − atMost(K−1) |\n\n## My Notes\n\n-\n"}, {"id": "04-Stack", "file": "04-Stack.md", "title": "04 · Stack & Monotonic Stack", "md": "# 04 · Stack & Monotonic Stack\n\n> **Prereqs:** 01 · **Time:** 3 days\n\n## When to use\n\n- Matching or nesting: parentheses, tags, decoding strings like `3[a2[c]]`.\n- Expression evaluation (RPN, calculators).\n- **\"Next greater or smaller element\"** and \"how far until a warmer day\": use a **monotonic stack**.\n- \"Largest rectangle\" or \"span\" problems.\n- Undo operations, or emulating recursion iteratively.\n\n## Core concepts\n\n- LIFO, with O(1) push, pop and peek.\n- **Monotonic stack**: keeps elements in increasing or decreasing order. When a new element breaks the order, pop the stack. Each popped element has just found its \"next greater or smaller\" element.\n  - Use a decreasing stack to find the next **greater** element, and an increasing stack to find the next **smaller** one.\n- Store **indices** rather than values so you can calculate distances and widths.\n- Min stack: store the pair `(value, current_min)` at each level.\n\n## Templates\n\n```python\n# Next greater element (to the right)\nres = [-1] * n\nst = []  # indices, values decreasing\nfor i, x in enumerate(nums):\n    while st and nums[st[-1]] < x:\n        res[st.pop()] = x\n    st.append(i)\n\n# Circular variant: iterate 2n, index i % n\n\n# Largest rectangle in histogram\nst, best = [], 0\nfor i, h in enumerate(heights + [0]):\n    start = i\n    while st and st[-1][1] > h:\n        idx, ht = st.pop()\n        best = max(best, ht * (i - idx))\n        start = idx\n    st.append((start, h))\n```\n\n## Pitfalls\n\n- Popping from an empty stack. Always check `while st and ...`.\n- Elements left on the stack at the end need handling. Use a sentinel value or a post-processing step.\n- Deciding between strict and non-strict comparison (`<` vs `<=`) when values are duplicated.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 20 | [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | E | Matching |\n| [ ] | 232 | [Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/) | E | Two stacks, amortized |\n| [ ] | 496 | [Next Greater Element I](https://leetcode.com/problems/next-greater-element-i/) | E | Monotonic |\n| [ ] | 155 | [Min Stack](https://leetcode.com/problems/min-stack/) | M | Pair (value, min) |\n| [ ] | 150 | [Evaluate Reverse Polish Notation](https://leetcode.com/problems/evaluate-reverse-polish-notation/) | M | Operand stack |\n| [ ] | 739 | [Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | M | Monotonic decreasing |\n| [ ] | 503 | [Next Greater Element II](https://leetcode.com/problems/next-greater-element-ii/) | M | Circular, 2n pass |\n| [ ] | 394 | [Decode String](https://leetcode.com/problems/decode-string/) | M | Stack of (string, count) |\n| [ ] | 853 | [Car Fleet](https://leetcode.com/problems/car-fleet/) | M | Sort + stack of times |\n| [ ] | 84 | [Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/) | H | Monotonic increasing |\n| [ ] | 224 | [Basic Calculator](https://leetcode.com/problems/basic-calculator/) | H | Sign stack |\n\n## My Notes\n\n-\n"}, {"id": "05-Binary-Search", "file": "05-Binary-Search.md", "title": "05 · Binary Search", "md": "# 05 · Binary Search\n\n> **Prereqs:** 00 · **Time:** 3–4 days\n\n## When to use\n\n- A sorted array, or one that is sorted but rotated.\n- O(log n) is required, or n is around 10⁹.\n- **Binary search on the answer**: \"find the minimum speed, capacity or time such that the task is feasible\", where feasibility is **monotonic** (once it becomes true, it stays true).\n- Finding a boundary: the first or last occurrence, or a lower or upper bound.\n\n## Core concepts\n\n- Think of binary search as finding **the first index where `cond(i)` is True** in a sequence like `F F F T T T`.\n- Calculate `mid = (lo + hi) // 2`. In Go, C++ or Java, use `lo + (hi - lo) / 2` to avoid overflow.\n- Rotated array: one half is always sorted, so work out which half it is and whether the target falls inside it.\n- Python's `bisect_left` returns the first index with `a[i] >= x`, and `bisect_right` returns the first index with `a[i] > x`.\n\n## Templates\n\n```python\n# Universal: first index where cond is True (lo..hi inclusive search space)\ndef first_true(lo, hi, cond):\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if cond(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo   # check cond(lo) if \"no answer\" is possible\n\n# Binary search on answer (e.g. Koko)\nlo, hi = 1, max(piles)\nwhile lo < hi:\n    mid = (lo + hi) // 2\n    if hours_needed(mid) <= h: hi = mid\n    else: lo = mid + 1\nreturn lo\n\n# Classic exact match\nl, r = 0, len(a) - 1\nwhile l <= r:\n    m = (l + r) // 2\n    if a[m] == t: return m\n    if a[m] < t: l = m + 1\n    else: r = m - 1\nreturn -1\n```\n\n## Pitfalls\n\n- Infinite loops from mixing up the templates (`lo < hi` with `hi = mid`, versus `lo <= hi` with `hi = mid - 1`). Pick one template and stick to it.\n- Setting the wrong search bounds for binary search on the answer (lo and hi must include every possible answer).\n- Rotated arrays with duplicates, which make the worst case O(n).\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 704 | [Binary Search](https://leetcode.com/problems/binary-search/) | E | Classic |\n| [ ] | 35 | [Search Insert Position](https://leetcode.com/problems/search-insert-position/) | E | Lower bound |\n| [ ] | 74 | [Search a 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix/) | M | Flatten the index |\n| [ ] | 34 | [Find First and Last Position of Element in Sorted Array](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/) | M | Two boundaries |\n| [ ] | 875 | [Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) | M | Search on the answer |\n| [ ] | 1011 | [Capacity To Ship Packages Within D Days](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/) | M | Search on the answer |\n| [ ] | 153 | [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) | M | Compare with the right end |\n| [ ] | 33 | [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/) | M | Find the sorted half |\n| [ ] | 162 | [Find Peak Element](https://leetcode.com/problems/find-peak-element/) | M | Follow the slope |\n| [ ] | 981 | [Time Based Key-Value Store](https://leetcode.com/problems/time-based-key-value-store/) | M | bisect on timestamps |\n| [ ] | 410 | [Split Array Largest Sum](https://leetcode.com/problems/split-array-largest-sum/) | H | Search on the answer |\n| [ ] | 4 | [Median of Two Sorted Arrays](https://leetcode.com/problems/median-of-two-sorted-arrays/) | H | Partition search |\n\n## My Notes\n\n-\n"}, {"id": "06-Linked-List", "file": "06-Linked-List.md", "title": "06 · Linked List", "md": "# 06 · Linked List\n\n> **Prereqs:** 02 · **Time:** 3 days\n\n## When to use\n\n- The input is a linked list, or you're designing structures like an LRU cache (hash map plus doubly linked list).\n- Cycle detection, including \"find the duplicate\" problems on arrays treated as a linked list.\n\n## Core concepts\n\n- **Dummy (sentinel) node**: makes it easier to handle changes to the head.\n- **Fast/slow pointers (Floyd's algorithm)**: finds the middle of the list, detects cycles, and locates the start of a cycle.\n- **In-place reversal**: uses three pointers, `prev`, `cur` and `nxt`.\n- **The gap technique**: to remove the nth node from the end, move `fast` n steps ahead first.\n- Many problems are combinations of three steps: find the middle, reverse the second half, then merge.\n\n## Templates\n\n```python\n# Reverse\nprev, cur = None, head\nwhile cur:\n    nxt = cur.next\n    cur.next = prev\n    prev, cur = cur, nxt\nreturn prev\n\n# Middle (returns second middle for even length)\nslow = fast = head\nwhile fast and fast.next:\n    slow, fast = slow.next, fast.next.next\n\n# Cycle start (Floyd)\nslow = fast = head\nwhile fast and fast.next:\n    slow, fast = slow.next, fast.next.next\n    if slow is fast:\n        p = head\n        while p is not slow:\n            p, slow = p.next, slow.next\n        return p\nreturn None\n\n# Dummy node merge\ndummy = tail = ListNode()\nwhile a and b:\n    if a.val <= b.val: tail.next, a = a, a.next\n    else: tail.next, b = b, b.next\n    tail = tail.next\ntail.next = a or b\nreturn dummy.next\n```\n\n## Pitfalls\n\n- Losing the reference to `next` before you rewire the pointers.\n- Not checking `fast and fast.next`.\n- Forgetting to cut the list (`mid.next = None`) when splitting it.\n- Use `is` to compare nodes, not `==`.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 206 | [Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/) | E | Reversal |\n| [ ] | 21 | [Merge Two Sorted Lists](https://leetcode.com/problems/merge-two-sorted-lists/) | E | Dummy node |\n| [ ] | 141 | [Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) | E | Fast/slow |\n| [ ] | 876 | [Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) | E | Fast/slow |\n| [ ] | 19 | [Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/) | M | Gap |\n| [ ] | 143 | [Reorder List](https://leetcode.com/problems/reorder-list/) | M | Middle + reverse + merge |\n| [ ] | 2 | [Add Two Numbers](https://leetcode.com/problems/add-two-numbers/) | M | Carry |\n| [ ] | 138 | [Copy List with Random Pointer](https://leetcode.com/problems/copy-list-with-random-pointer/) | M | Hash map / interleave |\n| [ ] | 142 | [Linked List Cycle II](https://leetcode.com/problems/linked-list-cycle-ii/) | M | Floyd cycle start |\n| [ ] | 287 | [Find the Duplicate Number](https://leetcode.com/problems/find-the-duplicate-number/) | M | Array as a linked list |\n| [ ] | 146 | [LRU Cache](https://leetcode.com/problems/lru-cache/) | M | Hash map + doubly linked list ⭐ |\n| [ ] | 23 | [Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/) | H | Heap / divide and conquer |\n| [ ] | 25 | [Reverse Nodes in k-Group](https://leetcode.com/problems/reverse-nodes-in-k-group/) | H | Reverse in chunks |\n\n⭐ = very frequently asked\n\n## My Notes\n\n-\n"}, {"id": "07-Trees", "file": "07-Trees.md", "title": "07 · Trees", "md": "# 07 · Trees\n\n> **Prereqs:** recursion basics · **Time:** 5–6 days (this topic comes up a lot)\n\n## When to use\n\n- The input is a binary tree or BST, a hierarchy, or a parsed structure.\n- Questions about depth, diameter, paths, ancestors, level-by-level views, or serialization.\n\n## Core concepts\n\n- **DFS orders**: pre-order (node, left, right), in-order (left, node, right; **gives sorted order for a BST**), and post-order (left, right, node; use it when a parent needs results from its children).\n- **BFS / level order**: uses a queue and processes the tree one level at a time.\n- **BST property**: every value in the left subtree is less than the node, which is less than every value in the right subtree. Validate with **min and max bounds**, not by comparing each node only with its children.\n- **The \"return one thing, update a global\" pattern**: used for diameter and maximum path sum. The recursive call returns the best single branch, and a global variable tracks the best path that passes through the current node.\n- Height is O(log n) if the tree is balanced and O(n) if it's skewed. That height is the recursion stack space.\n\n## Templates\n\n```python\n# DFS returning a value (height)\ndef height(node):\n    if not node: return 0\n    return 1 + max(height(node.left), height(node.right))\n\n# Return-one, update-global (diameter)\nbest = 0\ndef dfs(node):\n    nonlocal best\n    if not node: return 0\n    L, R = dfs(node.left), dfs(node.right)\n    best = max(best, L + R)\n    return 1 + max(L, R)\n\n# BFS level order\nq = deque([root]) if root else deque()\nwhile q:\n    level = []\n    for _ in range(len(q)):\n        node = q.popleft()\n        level.append(node.val)\n        if node.left: q.append(node.left)\n        if node.right: q.append(node.right)\n    res.append(level)\n\n# Validate BST with bounds\ndef valid(node, lo=float('-inf'), hi=float('inf')):\n    if not node: return True\n    if not (lo < node.val < hi): return False\n    return valid(node.left, lo, node.val) and valid(node.right, node.val, hi)\n\n# Iterative inorder\nst, cur = [], root\nwhile st or cur:\n    while cur:\n        st.append(cur); cur = cur.left\n    cur = st.pop()\n    visit(cur)\n    cur = cur.right\n```\n\n## Pitfalls\n\n- Validating a BST by comparing each node only with its direct children.\n- Handling `None` children inconsistently.\n- Max path sum: forgetting to clamp negative branches to 0.\n- Python's recursion limit is about 1000, which a very deep, skewed tree can exceed. Mention this in the interview.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 226 | [Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/) | E | DFS |\n| [ ] | 104 | [Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/) | E | DFS |\n| [ ] | 100 | [Same Tree](https://leetcode.com/problems/same-tree/) | E | DFS on two trees |\n| [ ] | 572 | [Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree/) | E | Same Tree at every node |\n| [ ] | 110 | [Balanced Binary Tree](https://leetcode.com/problems/balanced-binary-tree/) | E | Height + flag |\n| [ ] | 543 | [Diameter of Binary Tree](https://leetcode.com/problems/diameter-of-binary-tree/) | E | Return-one, update-global |\n| [ ] | 102 | [Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/) | M | BFS |\n| [ ] | 199 | [Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) | M | BFS, last node per level |\n| [ ] | 1448 | [Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) | M | Pass the max down |\n| [ ] | 98 | [Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/) | M | Bounds |\n| [ ] | 230 | [Kth Smallest Element in a BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/) | M | In-order |\n| [ ] | 235 | [Lowest Common Ancestor of a BST](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/) | M | Use the BST property |\n| [ ] | 236 | [Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/) | M | Post-order ⭐ |\n| [ ] | 105 | [Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/) | M | Index map |\n| [ ] | 124 | [Binary Tree Maximum Path Sum](https://leetcode.com/problems/binary-tree-maximum-path-sum/) | H | Return-one, update-global ⭐ |\n| [ ] | 297 | [Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/) | H | Pre-order with null markers |\n\n## My Notes\n\n-\n"}, {"id": "08-Tries", "file": "08-Tries.md", "title": "08 · Tries", "md": "# 08 · Tries\n\n> **Prereqs:** 07 · **Time:** 1–2 days\n\n## When to use\n\n- **Prefix** queries: autocomplete, \"starts with\", or replacing words with their roots.\n- Searching for many words in a grid at once (Word Search II).\n- Wildcard matching against a dictionary.\n- **Bitwise trie**: maximising XOR between pairs of numbers.\n\n## Core concepts\n\n- Each node holds `children: dict[char, Node]` and an `end` flag (or stores the word itself).\n- Insert and search take O(L) time, where L is the word length. Space is O(total number of characters).\n- To handle wildcards such as `.`, run a DFS over every child at that position.\n\n## Template\n\n```python\nclass TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.end = False\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word):\n        node = self.root\n        for c in word:\n            node = node.children.setdefault(c, TrieNode())\n        node.end = True\n\n    def _walk(self, s):\n        node = self.root\n        for c in s:\n            if c not in node.children: return None\n            node = node.children[c]\n        return node\n\n    def search(self, word):\n        n = self._walk(word); return bool(n and n.end)\n\n    def startsWith(self, prefix):\n        return self._walk(prefix) is not None\n```\n\n## Pitfalls\n\n- Word Search II: you need to **prune** found words from the trie, or the solution exceeds the time limit.\n- Forgetting the `end` flag, which makes `search(\"app\")` return True when only \"apple\" was inserted.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 14 | [Longest Common Prefix](https://leetcode.com/problems/longest-common-prefix/) | E | Warm-up (no trie needed) |\n| [ ] | 208 | [Implement Trie (Prefix Tree)](https://leetcode.com/problems/implement-trie-prefix-tree/) | M | Core |\n| [ ] | 211 | [Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure/) | M | Wildcard DFS |\n| [ ] | 648 | [Replace Words](https://leetcode.com/problems/replace-words/) | M | Shortest prefix |\n| [ ] | 1268 | [Search Suggestions System](https://leetcode.com/problems/search-suggestions-system/) | M | Prefix + sorting |\n| [ ] | 421 | [Maximum XOR of Two Numbers in an Array](https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/) | M | Bitwise trie |\n| [ ] | 212 | [Word Search II](https://leetcode.com/problems/word-search-ii/) | H | Trie + grid DFS ⭐ |\n\n## My Notes\n\n-\n"}, {"id": "09-Heaps", "file": "09-Heaps.md", "title": "09 · Heaps / Priority Queue", "md": "# 09 · Heaps / Priority Queue\n\n> **Prereqs:** 01 · **Time:** 2–3 days\n\n## When to use\n\n- \"Top K\", \"Kth largest or smallest\", \"K closest\".\n- Repeatedly taking the min or max as the data changes (scheduling, simulations).\n- Merging K sorted lists or streams.\n- **Median of a stream**: use two heaps.\n- Dijkstra's algorithm and Prim's algorithm (topic 12).\n\n## Core concepts\n\n- A binary heap gives O(log n) push and pop and O(1) peek. `heapify` takes O(n).\n- Python's `heapq` is a **min-heap** only. For a max-heap, push `-x`.\n- **Top K largest**: keep a **min-heap of size K**. This takes O(n log k).\n- Push tuples like `(priority, tiebreak, item)` when the items can't be compared with each other.\n- **Two heaps for the median**: a max-heap holds the lower half and a min-heap holds the upper half. Keep their sizes within 1 of each other.\n- **Quickselect** finds the Kth element in O(n) on average. It's a good optimisation to mention.\n\n## Templates\n\n```python\nimport heapq\n\n# K largest with min-heap of size k\nh = []\nfor x in nums:\n    heapq.heappush(h, x)\n    if len(h) > k: heapq.heappop(h)\nreturn h[0]  # kth largest\n\n# Max-heap via negation\nh = [-x for x in nums]; heapq.heapify(h)\nlargest = -heapq.heappop(h)\n\n# Merge k sorted lists\nh = [(node.val, i, node) for i, node in enumerate(lists) if node]\nheapq.heapify(h)\nwhile h:\n    val, i, node = heapq.heappop(h)\n    ...\n    if node.next: heapq.heappush(h, (node.next.val, i, node.next))\n\n# Two heaps median\nlo, hi = [], []          # lo = max-heap (negated), hi = min-heap\ndef add(x):\n    heapq.heappush(lo, -x)\n    heapq.heappush(hi, -heapq.heappop(lo))\n    if len(hi) > len(lo): heapq.heappush(lo, -heapq.heappop(hi))\ndef median():\n    return -lo[0] if len(lo) > len(hi) else (-lo[0] + hi[0]) / 2\n```\n\n## Pitfalls\n\n- Pushing objects that can't be compared, which causes a TypeError. Add an index as a tiebreaker.\n- Forgetting to negate the value back when using a max-heap.\n- Using a heap when sorting once would be simpler.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 703 | [Kth Largest Element in a Stream](https://leetcode.com/problems/kth-largest-element-in-a-stream/) | E | Min-heap of size k |\n| [ ] | 1046 | [Last Stone Weight](https://leetcode.com/problems/last-stone-weight/) | E | Max-heap |\n| [ ] | 973 | [K Closest Points to Origin](https://leetcode.com/problems/k-closest-points-to-origin/) | M | Heap of size k ⭐ |\n| [ ] | 215 | [Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/) | M | Heap / quickselect |\n| [ ] | 621 | [Task Scheduler](https://leetcode.com/problems/task-scheduler/) | M | Heap + cooldown queue |\n| [ ] | 767 | [Reorganize String](https://leetcode.com/problems/reorganize-string/) | M | Greedy with a max-heap |\n| [ ] | 355 | [Design Twitter](https://leetcode.com/problems/design-twitter/) | M | Merge K feeds |\n| [ ] | 295 | [Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/) | H | Two heaps ⭐ |\n| [ ] | 502 | [IPO](https://leetcode.com/problems/ipo/) | H | Sort + heap |\n\n## My Notes\n\n-\n"}, {"id": "10-Backtracking", "file": "10-Backtracking.md", "title": "10 · Backtracking", "md": "# 10 · Backtracking\n\n> **Prereqs:** recursion, 07 · **Time:** 4–5 days\n\n## When to use\n\n- \"Generate **all**\" subsets, permutations, combinations, partitions or valid configurations.\n- Constraint satisfaction problems: N-Queens, Sudoku, searching for a word in a grid.\n- n is small (≤ 20 or so), so exponential time is expected.\n\n## Core concepts\n\n- The pattern is **choose → explore → un-choose**.\n- Think of the solution as a **decision tree**. Each level is one decision.\n- **Subsets**: include or skip each element. **Combinations**: pass a `start` index so you never go backwards. **Permutations**: use a `used[]` array.\n- **Handling duplicates**: sort first, then skip `nums[i] == nums[i-1]` when `i > start` (or when the previous duplicate is unused, for permutations).\n- **Pruning**: stop early once a branch can't succeed (for example, the sum already exceeds the target).\n- Complexity: subsets is O(n·2ⁿ) and permutations is O(n·n!).\n\n## Templates\n\n```python\n# Subsets / combinations\nres, path = [], []\ndef bt(start):\n    res.append(path[:])              # copy!\n    for i in range(start, len(nums)):\n        if i > start and nums[i] == nums[i-1]: continue  # dedupe (sorted)\n        path.append(nums[i])\n        bt(i + 1)                    # i (not i+1) if reuse allowed\n        path.pop()\nbt(0)\n\n# Permutations\nused = [False] * n\ndef bt():\n    if len(path) == n:\n        res.append(path[:]); return\n    for i in range(n):\n        if used[i]: continue\n        used[i] = True; path.append(nums[i])\n        bt()\n        used[i] = False; path.pop()\n\n# Grid backtracking (word search)\ndef dfs(r, c, i):\n    if i == len(word): return True\n    if not (0 <= r < R and 0 <= c < C) or board[r][c] != word[i]: return False\n    tmp, board[r][c] = board[r][c], '#'\n    found = any(dfs(r+dr, c+dc, i+1) for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)))\n    board[r][c] = tmp\n    return found\n```\n\n## Pitfalls\n\n- Appending `path` instead of `path[:]`, which means every result ends up pointing to the same list.\n- Forgetting to undo the choice (the pop, or restoring a grid cell).\n- Getting the dedupe condition wrong, or forgetting to sort first.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 78 | [Subsets](https://leetcode.com/problems/subsets/) | M | Include/skip |\n| [ ] | 90 | [Subsets II](https://leetcode.com/problems/subsets-ii/) | M | Sort + dedupe |\n| [ ] | 39 | [Combination Sum](https://leetcode.com/problems/combination-sum/) | M | Reuse allowed |\n| [ ] | 40 | [Combination Sum II](https://leetcode.com/problems/combination-sum-ii/) | M | No reuse + dedupe |\n| [ ] | 46 | [Permutations](https://leetcode.com/problems/permutations/) | M | Used array |\n| [ ] | 47 | [Permutations II](https://leetcode.com/problems/permutations-ii/) | M | Used array + dedupe |\n| [ ] | 17 | [Letter Combinations of a Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number/) | M | Product of choices |\n| [ ] | 22 | [Generate Parentheses](https://leetcode.com/problems/generate-parentheses/) | M | Track open/close counts |\n| [ ] | 79 | [Word Search](https://leetcode.com/problems/word-search/) | M | Grid backtracking |\n| [ ] | 131 | [Palindrome Partitioning](https://leetcode.com/problems/palindrome-partitioning/) | M | Partition |\n| [ ] | 51 | [N-Queens](https://leetcode.com/problems/n-queens/) | H | Sets for columns and diagonals |\n| [ ] | 37 | [Sudoku Solver](https://leetcode.com/problems/sudoku-solver/) | H | Constraint satisfaction |\n\n## My Notes\n\n-\n"}, {"id": "11-Graphs", "file": "11-Graphs.md", "title": "11 · Graphs", "md": "# 11 · Graphs\n\n> **Prereqs:** 07, 10 · **Time:** 5–6 days\n\n## When to use\n\n- Grids (islands, flood fill), networks, dependencies, states connected by transitions.\n- \"Number of connected components\", \"can you reach X\", or \"shortest path with unweighted edges\" (use BFS).\n- Prerequisites or ordering: **topological sort**.\n- Dynamic connectivity, or detecting a cycle in an undirected graph: **Union-Find**.\n\n## Core concepts\n\n- **Representations**: an adjacency list (`defaultdict(list)`), or an implicit grid where each cell's neighbours are found with direction vectors.\n- **DFS** is good for reachability, components, cycle detection and flood fill.\n- **BFS** gives the **shortest path in an unweighted graph**. **Multi-source BFS** starts with every source in the queue (rotting oranges, walls and gates).\n- **Topological sort (Kahn's algorithm)**: start the BFS from nodes with in-degree 0. If you process fewer than n nodes, the graph has a cycle.\n- **Cycle detection in a directed graph**: DFS with three colours (unvisited, visiting, visited).\n- **Union-Find**: path compression plus union by rank gives about O(α(n)) per operation.\n- **Bipartite check**: two-colour the graph with BFS or DFS.\n- **Reverse thinking**: start from the boundary or the target instead (Pacific Atlantic, Surrounded Regions).\n- Complexity is O(V + E). For a grid, that's O(R·C).\n\n## Templates\n\n```python\nDIRS = ((1,0),(-1,0),(0,1),(0,-1))\n\n# Grid DFS (flood fill)\ndef dfs(r, c):\n    if not (0 <= r < R and 0 <= c < C) or grid[r][c] != '1': return\n    grid[r][c] = '0'\n    for dr, dc in DIRS: dfs(r+dr, c+dc)\n\n# BFS shortest path (unweighted)\nq = deque([(start, 0)]); seen = {start}\nwhile q:\n    node, d = q.popleft()\n    if node == target: return d\n    for nb in adj[node]:\n        if nb not in seen:\n            seen.add(nb); q.append((nb, d + 1))\n\n# Topological sort (Kahn)\nindeg = [0] * n\nfor u, v in edges: adj[u].append(v); indeg[v] += 1\nq = deque(i for i in range(n) if indeg[i] == 0)\norder = []\nwhile q:\n    u = q.popleft(); order.append(u)\n    for v in adj[u]:\n        indeg[v] -= 1\n        if indeg[v] == 0: q.append(v)\nhas_cycle = len(order) < n\n\n# Union-Find\nparent = list(range(n)); rank = [0] * n\ndef find(x):\n    while parent[x] != x:\n        parent[x] = parent[parent[x]]\n        x = parent[x]\n    return x\ndef union(a, b):\n    ra, rb = find(a), find(b)\n    if ra == rb: return False\n    if rank[ra] < rank[rb]: ra, rb = rb, ra\n    parent[rb] = ra\n    if rank[ra] == rank[rb]: rank[ra] += 1\n    return True\n```\n\n## Pitfalls\n\n- Marking a node visited when you **pop** it in BFS instead of when you **push** it, which leads to duplicate work.\n- Getting the direction of prerequisite edges backwards.\n- Recursion depth on large grids. Mention that an iterative BFS avoids it.\n- Forgetting isolated nodes (nodes with no edges).\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 200 | [Number of Islands](https://leetcode.com/problems/number-of-islands/) | M | Grid DFS ⭐ |\n| [ ] | 695 | [Max Area of Island](https://leetcode.com/problems/max-area-of-island/) | M | Grid DFS |\n| [ ] | 133 | [Clone Graph](https://leetcode.com/problems/clone-graph/) | M | DFS + map from old node to new |\n| [ ] | 994 | [Rotting Oranges](https://leetcode.com/problems/rotting-oranges/) | M | Multi-source BFS ⭐ |\n| [ ] | 286 | [Walls and Gates](https://leetcode.com/problems/walls-and-gates/) 🔒 | M | Multi-source BFS |\n| [ ] | 417 | [Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow/) | M | Reverse from the borders |\n| [ ] | 130 | [Surrounded Regions](https://leetcode.com/problems/surrounded-regions/) | M | Reverse from the borders |\n| [ ] | 547 | [Number of Provinces](https://leetcode.com/problems/number-of-provinces/) | M | DFS / Union-Find |\n| [ ] | 323 | [Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/) 🔒 | M | Union-Find |\n| [ ] | 261 | [Graph Valid Tree](https://leetcode.com/problems/graph-valid-tree/) 🔒 | M | n−1 edges + connected |\n| [ ] | 785 | [Is Graph Bipartite?](https://leetcode.com/problems/is-graph-bipartite/) | M | Two-colouring |\n| [ ] | 207 | [Course Schedule](https://leetcode.com/problems/course-schedule/) | M | Topological sort / cycle ⭐ |\n| [ ] | 210 | [Course Schedule II](https://leetcode.com/problems/course-schedule-ii/) | M | Topological order |\n| [ ] | 684 | [Redundant Connection](https://leetcode.com/problems/redundant-connection/) | M | Union-Find |\n| [ ] | 1091 | [Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/) | M | BFS on a grid |\n| [ ] | 127 | [Word Ladder](https://leetcode.com/problems/word-ladder/) | H | BFS over word states |\n\n## My Notes\n\n-\n"}, {"id": "12-Advanced-Graphs", "file": "12-Advanced-Graphs.md", "title": "12 · Advanced Graphs", "md": "# 12 · Advanced Graphs\n\n> **Prereqs:** 09, 11 · **Time:** 4 days\n\n## When to use\n\n- **Weighted** shortest path with non-negative weights: **Dijkstra**.\n- Shortest path with a limit on the number of edges, or with negative weights: **Bellman-Ford**.\n- Shortest paths between every pair of nodes, with small n: **Floyd–Warshall**, which is O(n³).\n- Connecting every node at the lowest total cost: **minimum spanning tree** (Prim's or Kruskal's algorithm).\n- Minimising the maximum edge along a path: a modified Dijkstra, or binary search combined with BFS.\n- Using every edge exactly once: an **Eulerian path** (Hierholzer's algorithm).\n- Critical edges or articulation points: **Tarjan's algorithm**.\n\n## Core concepts\n\n- **Dijkstra**: uses a min-heap of `(dist, node)`. When you pop an entry whose distance is out of date, skip it. Runs in O(E log V).\n- **Kruskal**: sort the edges by weight, then add each edge with Union-Find if it doesn't create a cycle. Runs in O(E log E).\n- **Prim**: grow the tree from one node, using a min-heap of the edges that cross out of the tree.\n- **Bellman-Ford**: relax every edge V−1 times. For \"at most K stops\", run K+1 rounds and copy the distance array each round.\n\n## Templates\n\n```python\n# Dijkstra\ndist = {src: 0}\nh = [(0, src)]\nwhile h:\n    d, u = heapq.heappop(h)\n    if d > dist.get(u, float('inf')): continue   # stale\n    for v, w in adj[u]:\n        nd = d + w\n        if nd < dist.get(v, float('inf')):\n            dist[v] = nd\n            heapq.heappush(h, (nd, v))\n\n# Kruskal (with Union-Find from topic 11)\nedges.sort(key=lambda e: e[2])\ncost = 0\nfor u, v, w in edges:\n    if union(u, v): cost += w\n\n# Bellman-Ford with at most K edges\ndist = [inf] * n; dist[src] = 0\nfor _ in range(K + 1):\n    tmp = dist[:]\n    for u, v, w in flights:\n        if dist[u] + w < tmp[v]: tmp[v] = dist[u] + w\n    dist = tmp\n```\n\n## Pitfalls\n\n- Dijkstra gives wrong answers with negative edge weights.\n- Bellman-Ford with a stop limit: not copying the distance array each round lets a path use more edges than allowed in one round.\n- Forgetting to skip out-of-date heap entries, which makes the algorithm much slower.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 743 | [Network Delay Time](https://leetcode.com/problems/network-delay-time/) | M | Dijkstra ⭐ |\n| [ ] | 1514 | [Path with Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/) | M | Dijkstra with a max-heap |\n| [ ] | 1631 | [Path With Minimum Effort](https://leetcode.com/problems/path-with-minimum-effort/) | M | Minimax Dijkstra |\n| [ ] | 1584 | [Min Cost to Connect All Points](https://leetcode.com/problems/min-cost-to-connect-all-points/) | M | Prim / Kruskal |\n| [ ] | 787 | [Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/) | M | Bellman-Ford |\n| [ ] | 721 | [Accounts Merge](https://leetcode.com/problems/accounts-merge/) | M | Union-Find |\n| [ ] | 778 | [Swim in Rising Water](https://leetcode.com/problems/swim-in-rising-water/) | H | Minimax Dijkstra |\n| [ ] | 332 | [Reconstruct Itinerary](https://leetcode.com/problems/reconstruct-itinerary/) | H | Eulerian path |\n| [ ] | 269 | [Alien Dictionary](https://leetcode.com/problems/alien-dictionary/) 🔒 | H | Build graph + topological sort ⭐ |\n| [ ] | 1192 | [Critical Connections in a Network](https://leetcode.com/problems/critical-connections-in-a-network/) | H | Tarjan bridges |\n\n## My Notes\n\n-\n"}, {"id": "13-DP-1D", "file": "13-DP-1D.md", "title": "13 · Dynamic Programming: 1D", "md": "# 13 · Dynamic Programming: 1D\n\n> **Prereqs:** 10 · **Time:** 5–6 days\n\n## When to use\n\n- The problem asks for the **number of ways**, the **min or max**, or **is it possible**.\n- Choices made at each step lead to **overlapping subproblems** (the plain recursion tree recomputes the same states).\n- The problem has **optimal substructure**: the best answer is built from the best answers to smaller subproblems.\n\n## Framework (use it on every DP problem)\n\n1. **State**: what does `dp[i]` mean? Write it out in words.\n2. **Transition**: how do you get `dp[i]` from smaller states?\n3. **Base cases**.\n4. **Answer**: is it `dp[n]`, or `max(dp)`?\n5. **Order**: fill the table so each state's dependencies are computed first.\n6. **Optimise space**: if `dp[i]` only depends on `dp[i-1]` and `dp[i-2]`, keep two variables.\n\nStart with recursion plus memoization (top-down), then convert it to a table (bottom-up) if needed.\n\n## Common 1D shapes\n\n| Shape | Transition | Examples |\n|-------|-----------|----------|\n| Fibonacci-like | `dp[i] = dp[i-1] + dp[i-2]` | Climbing Stairs, Decode Ways |\n| Take or skip | `dp[i] = max(dp[i-1], dp[i-2] + a[i])` | House Robber |\n| Unbounded knapsack | `dp[x] = min(dp[x - c] + 1)` over each coin c | Coin Change |\n| 0/1 knapsack | iterate x **backwards** | Partition Equal Subset Sum |\n| LIS | `dp[i] = 1 + max(dp[j])` for j < i with `a[j] < a[i]` | LIS, O(n log n) with patience sorting |\n| Track max and min | keep both the current max and min | Max Product Subarray |\n| Expand around centre | not a table, O(n²) | Palindromic substrings |\n\n## Templates\n\n```python\n# Top-down\nfrom functools import cache\n@cache\ndef f(i):\n    if i >= n: return 0\n    return max(f(i + 1), nums[i] + f(i + 2))\n\n# Bottom-up, O(1) space (House Robber)\nprev2 = prev1 = 0\nfor x in nums:\n    prev2, prev1 = prev1, max(prev1, prev2 + x)\n\n# Coin change (min coins)\ndp = [0] + [float('inf')] * amount\nfor x in range(1, amount + 1):\n    for c in coins:\n        if c <= x: dp[x] = min(dp[x], dp[x - c] + 1)\n\n# 0/1 knapsack boolean\ndp = [True] + [False] * target\nfor x in nums:\n    for s in range(target, x - 1, -1):\n        dp[s] |= dp[s - x]\n```\n\n## Pitfalls\n\n- Not defining the state clearly enough. This causes most DP bugs.\n- 0/1 knapsack: iterating forwards, which lets you reuse the same item more than once.\n- Using `float('inf')` as \"impossible\" and forgetting to convert it to `-1` at the end.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 70 | [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/) | E | Fibonacci |\n| [ ] | 746 | [Min Cost Climbing Stairs](https://leetcode.com/problems/min-cost-climbing-stairs/) | E | Fibonacci with min |\n| [ ] | 198 | [House Robber](https://leetcode.com/problems/house-robber/) | M | Take or skip |\n| [ ] | 213 | [House Robber II](https://leetcode.com/problems/house-robber-ii/) | M | Two linear passes |\n| [ ] | 5 | [Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) | M | Expand around centre |\n| [ ] | 647 | [Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/) | M | Expand around centre |\n| [ ] | 91 | [Decode Ways](https://leetcode.com/problems/decode-ways/) | M | Fibonacci-like |\n| [ ] | 322 | [Coin Change](https://leetcode.com/problems/coin-change/) | M | Unbounded knapsack ⭐ |\n| [ ] | 152 | [Maximum Product Subarray](https://leetcode.com/problems/maximum-product-subarray/) | M | Track max and min |\n| [ ] | 139 | [Word Break](https://leetcode.com/problems/word-break/) | M | dp[i] = whether the prefix can be split ⭐ |\n| [ ] | 300 | [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/) | M | LIS / patience sorting |\n| [ ] | 416 | [Partition Equal Subset Sum](https://leetcode.com/problems/partition-equal-subset-sum/) | M | 0/1 knapsack |\n\n## My Notes\n\n-\n"}, {"id": "14-DP-2D", "file": "14-DP-2D.md", "title": "14 · Dynamic Programming: 2D", "md": "# 14 · Dynamic Programming: 2D\n\n> **Prereqs:** 13 · **Time:** 5–6 days\n\n## When to use\n\n- **Two sequences** to compare (LCS, edit distance, interleaving).\n- A **grid** of paths.\n- One sequence plus an extra dimension such as remaining capacity, a state machine (holding a stock or not), or an interval `[i, j]`.\n\n## Common 2D shapes\n\n| Shape | State | Transition idea |\n|-------|-------|-----------------|\n| Grid paths | `dp[r][c]` | from the cell above or to the left |\n| Two strings | `dp[i][j]` = answer for `a[:i]`, `b[:j]` | if the characters match, take the diagonal; otherwise combine the neighbours |\n| Knapsack | `dp[i][cap]` | take item i or skip it |\n| State machine | `dp[i][state]` | transitions between states such as hold, sold and cooldown |\n| Interval | `dp[l][r]` | try every split point k in `(l, r)`, iterating by length |\n\n## Templates\n\n```python\n# LCS\ndp = [[0] * (m + 1) for _ in range(n + 1)]\nfor i in range(1, n + 1):\n    for j in range(1, m + 1):\n        if a[i-1] == b[j-1]:\n            dp[i][j] = dp[i-1][j-1] + 1\n        else:\n            dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n\n# Edit distance\ndp[i][0] = i; dp[0][j] = j\ndp[i][j] = dp[i-1][j-1] if a[i-1] == b[j-1] else \\\n           1 + min(dp[i-1][j],     # delete\n                   dp[i][j-1],     # insert\n                   dp[i-1][j-1])   # replace\n\n# Interval DP (iterate by length)\nfor length in range(2, n + 1):\n    for l in range(n - length + 1):\n        r = l + length - 1\n        for k in range(l, r):\n            dp[l][r] = best(dp[l][r], dp[l][k] + dp[k+1][r] + cost(l, k, r))\n\n# Grid DP with memoized DFS (great for \"longest increasing path\")\n@cache\ndef dfs(r, c): ...\n```\n\n## Pitfalls\n\n- Index shifting: when `dp` has size `n+1`, `dp[i]` corresponds to `a[i-1]`.\n- Loop order: interval DP must iterate **by length**, not by `l`.\n- Counting problems (Coin Change II): putting the coin loop **outside** counts combinations, while putting it inside counts permutations.\n- Space optimisation: if each row depends only on the previous row, keep 1D arrays for the previous and current rows.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 62 | [Unique Paths](https://leetcode.com/problems/unique-paths/) | M | Grid paths |\n| [ ] | 64 | [Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/) | M | Grid paths |\n| [ ] | 221 | [Maximal Square](https://leetcode.com/problems/maximal-square/) | M | Min of 3 neighbours |\n| [ ] | 1143 | [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/) | M | Two strings ⭐ |\n| [ ] | 518 | [Coin Change II](https://leetcode.com/problems/coin-change-ii/) | M | Count combinations |\n| [ ] | 494 | [Target Sum](https://leetcode.com/problems/target-sum/) | M | Knapsack / memo |\n| [ ] | 309 | [Best Time to Buy and Sell Stock with Cooldown](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/) | M | State machine |\n| [ ] | 97 | [Interleaving String](https://leetcode.com/problems/interleaving-string/) | M | Two strings |\n| [ ] | 72 | [Edit Distance](https://leetcode.com/problems/edit-distance/) | M | Two strings ⭐ |\n| [ ] | 329 | [Longest Increasing Path in a Matrix](https://leetcode.com/problems/longest-increasing-path-in-a-matrix/) | H | Memoized DFS |\n| [ ] | 115 | [Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/) | H | Two strings, counting |\n| [ ] | 312 | [Burst Balloons](https://leetcode.com/problems/burst-balloons/) | H | Interval, last balloon burst |\n| [ ] | 10 | [Regular Expression Matching](https://leetcode.com/problems/regular-expression-matching/) | H | Two strings + `*` |\n\n## My Notes\n\n-\n"}, {"id": "15-Greedy", "file": "15-Greedy.md", "title": "15 · Greedy", "md": "# 15 · Greedy\n\n> **Prereqs:** 01, 09 · **Time:** 3 days\n\n## When to use\n\n- The choice that looks best right now **never needs to be undone**.\n- Sorting by some key makes the next decision obvious.\n- Reachability, or covering a range (\"how far can I get?\").\n- If you can't prove the greedy choice is correct, the problem is probably DP.\n\n## Core concepts\n\n- **Exchange argument**: to prove greedy works, show that swapping any optimal solution's choice for the greedy choice doesn't make the result worse.\n- **Track the furthest reachable point**: Jump Game I and II.\n- **Running balance with a reset**: Gas Station (if the tank goes negative, restart from the next station).\n- **Sort and process in order**: intervals, assigning cookies, hand of straights.\n- **Two passes (left to right, then right to left)**: Candy, Trapping Rain Water.\n- **Range of possibilities**: Valid Parenthesis String (track the minimum and maximum number of open brackets).\n\n## Templates\n\n```python\n# Jump Game: reachability\nfar = 0\nfor i, x in enumerate(nums):\n    if i > far: return False\n    far = max(far, i + x)\nreturn True\n\n# Jump Game II: BFS-by-levels\njumps = end = far = 0\nfor i in range(len(nums) - 1):\n    far = max(far, i + nums[i])\n    if i == end:\n        jumps += 1; end = far\nreturn jumps\n\n# Gas Station\nif sum(gas) < sum(cost): return -1\ntank = start = 0\nfor i in range(len(gas)):\n    tank += gas[i] - cost[i]\n    if tank < 0: tank, start = 0, i + 1\nreturn start\n```\n\n## Pitfalls\n\n- Using a greedy approach when the problem actually needs DP. Coin Change with arbitrary coin values is the classic trap.\n- Sorting by the wrong key.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 455 | [Assign Cookies](https://leetcode.com/problems/assign-cookies/) | E | Sort both lists |\n| [ ] | 122 | [Best Time to Buy and Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/) | M | Sum the gains |\n| [ ] | 55 | [Jump Game](https://leetcode.com/problems/jump-game/) | M | Furthest reach |\n| [ ] | 45 | [Jump Game II](https://leetcode.com/problems/jump-game-ii/) | M | BFS by levels |\n| [ ] | 134 | [Gas Station](https://leetcode.com/problems/gas-station/) | M | Running balance |\n| [ ] | 846 | [Hand of Straights](https://leetcode.com/problems/hand-of-straights/) | M | Sort + counts |\n| [ ] | 1899 | [Merge Triplets to Form Target Triplet](https://leetcode.com/problems/merge-triplets-to-form-target-triplet/) | M | Filter |\n| [ ] | 763 | [Partition Labels](https://leetcode.com/problems/partition-labels/) | M | Last occurrence of each character |\n| [ ] | 678 | [Valid Parenthesis String](https://leetcode.com/problems/valid-parenthesis-string/) | M | Min/max open count |\n| [ ] | 135 | [Candy](https://leetcode.com/problems/candy/) | H | Two passes |\n\n## My Notes\n\n-\n"}, {"id": "16-Intervals", "file": "16-Intervals.md", "title": "16 · Intervals", "md": "# 16 · Intervals\n\n> **Prereqs:** 09, 15 · **Time:** 2 days\n\n## When to use\n\n- The input is a list of `[start, end]` pairs: meetings, bookings, ranges.\n- Merging, inserting, counting overlaps, or finding the minimum number of rooms or arrows.\n\n## Core concepts\n\n- Two intervals overlap if `a.start <= b.end and b.start <= a.end`. Check whether the boundaries are inclusive.\n- **Sort by start** for merging and inserting.\n- **Sort by end** for \"the most non-overlapping intervals\" or \"the fewest arrows\". This is the classic activity-selection greedy.\n- **Minimum number of rooms**: use a min-heap of end times, or a **sweep line** (+1 at each start, −1 at each end, sorted).\n- Intersecting two sorted lists: use two pointers and advance whichever interval ends first.\n\n## Templates\n\n```python\n# Merge\nintervals.sort()\nres = [intervals[0]]\nfor s, e in intervals[1:]:\n    if s <= res[-1][1]:\n        res[-1][1] = max(res[-1][1], e)\n    else:\n        res.append([s, e])\n\n# Max non-overlapping (activity selection)\nintervals.sort(key=lambda x: x[1])\ncount, end = 0, float('-inf')\nfor s, e in intervals:\n    if s >= end:\n        count += 1; end = e\n\n# Meeting rooms II: heap of end times\nintervals.sort()\nh = []\nfor s, e in intervals:\n    if h and h[0] <= s: heapq.heappop(h)\n    heapq.heappush(h, e)\nreturn len(h)\n```\n\n## Pitfalls\n\n- Whether touching intervals like `[1,2]` and `[2,3]` count as overlapping depends on the problem. Read it carefully.\n- Sorting by start when the greedy approach needs sorting by end.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 252 | [Meeting Rooms](https://leetcode.com/problems/meeting-rooms/) 🔒 | E | Sort + check neighbours |\n| [ ] | 56 | [Merge Intervals](https://leetcode.com/problems/merge-intervals/) | M | Sort by start ⭐ |\n| [ ] | 57 | [Insert Interval](https://leetcode.com/problems/insert-interval/) | M | Three phases |\n| [ ] | 435 | [Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/) | M | Sort by end |\n| [ ] | 452 | [Minimum Number of Arrows to Burst Balloons](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/) | M | Sort by end |\n| [ ] | 986 | [Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/) | M | Two pointers |\n| [ ] | 253 | [Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/) 🔒 | M | Heap / sweep line ⭐ |\n| [ ] | 1851 | [Minimum Interval to Include Each Query](https://leetcode.com/problems/minimum-interval-to-include-each-query/) | H | Sort queries + heap |\n\n## My Notes\n\n-\n"}, {"id": "17-Math-and-Geometry", "file": "17-Math-and-Geometry.md", "title": "17 · Math & Geometry", "md": "# 17 · Math & Geometry\n\n> **Prereqs:** 01 · **Time:** 2 days\n\n## When to use\n\n- Matrix manipulation: rotating, spiral traversal, in-place marking.\n- Digit manipulation, overflow, modular arithmetic.\n- Primes, GCD, fast exponentiation.\n- Points, lines and squares on a 2D plane.\n\n## Core concepts\n\n- **Rotate a matrix 90° clockwise** = transpose it, then reverse each row.\n- **Spiral order**: shrink the four boundaries (top, bottom, left, right).\n- **In-place marking**: use the first row and first column as flags (Set Matrix Zeroes).\n- **Fast power**: `x^n` by repeated squaring takes O(log n). Handle negative n.\n- **GCD**: `gcd(a, b) = gcd(b, a % b)`. Use it to store a reduced slope `(dy/g, dx/g)` as a hash key (Max Points on a Line).\n- **Sieve of Eratosthenes** finds all primes up to n in O(n log log n).\n- **Cycle detection on numbers**: use a set or Floyd's algorithm (Happy Number).\n- **Modulo** `10**9 + 7`: apply the modulo after every addition or multiplication.\n- In Go, C++ or Java, watch for 32-bit **overflow**.\n\n## Templates\n\n```python\n# Rotate image\nn = len(m)\nfor i in range(n):\n    for j in range(i + 1, n):\n        m[i][j], m[j][i] = m[j][i], m[i][j]\nfor row in m: row.reverse()\n\n# Fast power\ndef power(x, n):\n    if n < 0: x, n = 1 / x, -n\n    res = 1\n    while n:\n        if n & 1: res *= x\n        x *= x; n >>= 1\n    return res\n\n# Sieve\nis_p = [True] * (n + 1); is_p[0:2] = [False, False]\nfor i in range(2, int(n ** 0.5) + 1):\n    if is_p[i]:\n        for j in range(i * i, n + 1, i): is_p[j] = False\n```\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 66 | [Plus One](https://leetcode.com/problems/plus-one/) | E | Carry |\n| [ ] | 202 | [Happy Number](https://leetcode.com/problems/happy-number/) | E | Cycle detection |\n| [ ] | 48 | [Rotate Image](https://leetcode.com/problems/rotate-image/) | M | Transpose + reverse ⭐ |\n| [ ] | 54 | [Spiral Matrix](https://leetcode.com/problems/spiral-matrix/) | M | Shrinking boundaries ⭐ |\n| [ ] | 73 | [Set Matrix Zeroes](https://leetcode.com/problems/set-matrix-zeroes/) | M | In-place markers |\n| [ ] | 50 | [Pow(x, n)](https://leetcode.com/problems/powx-n/) | M | Fast power |\n| [ ] | 43 | [Multiply Strings](https://leetcode.com/problems/multiply-strings/) | M | Grade-school multiplication |\n| [ ] | 204 | [Count Primes](https://leetcode.com/problems/count-primes/) | M | Sieve |\n| [ ] | 2013 | [Detect Squares](https://leetcode.com/problems/detect-squares/) | M | Diagonal-point counting |\n| [ ] | 149 | [Max Points on a Line](https://leetcode.com/problems/max-points-on-a-line/) | H | GCD slope key |\n\n## My Notes\n\n-\n"}, {"id": "18-Bit-Manipulation", "file": "18-Bit-Manipulation.md", "title": "18 · Bit Manipulation", "md": "# 18 · Bit Manipulation\n\n> **Prereqs:** none · **Time:** 1–2 days\n\n## When to use\n\n- \"Every element appears twice except one\" (XOR).\n- O(1) space is required for counting or finding elements.\n- Representing subsets compactly (bitmask DP, n ≤ 20).\n- Arithmetic without using `+` or `*`.\n\n## Core tricks\n\n| Trick | Expression |\n|-------|-----------|\n| XOR cancels pairs | `a ^ a = 0`, `a ^ 0 = a` |\n| Check bit i | `(x >> i) & 1` |\n| Set / clear / toggle bit i | `x \\| (1<<i)`, `x & ~(1<<i)`, `x ^ (1<<i)` |\n| Clear lowest set bit | `x & (x - 1)` |\n| Isolate lowest set bit | `x & -x` |\n| Power of two? | `x > 0 and x & (x - 1) == 0` |\n| Count set bits | `bin(x).count('1')` or Kernighan's loop |\n| Iterate all subsets of n items | `for mask in range(1 << n)` |\n| Counting bits DP | `bits[i] = bits[i >> 1] + (i & 1)` |\n\n## Python gotchas\n\n- Python integers have unlimited size, so negative numbers don't wrap. To simulate 32-bit integers, use `mask = 0xFFFFFFFF`, and if the result is greater than `0x7FFFFFFF`, convert it with `~(res ^ mask)`.\n- `>>` on a negative number is an arithmetic shift.\n\n## Templates\n\n```python\n# Single number\nres = 0\nfor x in nums: res ^= x\n\n# Kernighan popcount\ncnt = 0\nwhile x:\n    x &= x - 1; cnt += 1\n\n# Sum without + (32-bit simulation)\nMASK = 0xFFFFFFFF\nwhile b & MASK:\n    a, b = a ^ b, (a & b) << 1\nreturn a & MASK if b > 0 else a  # (see editorial for full sign handling)\n```\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 136 | [Single Number](https://leetcode.com/problems/single-number/) | E | XOR |\n| [ ] | 191 | [Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/) | E | Kernighan |\n| [ ] | 338 | [Counting Bits](https://leetcode.com/problems/counting-bits/) | E | DP on bits |\n| [ ] | 190 | [Reverse Bits](https://leetcode.com/problems/reverse-bits/) | E | Shift and build |\n| [ ] | 268 | [Missing Number](https://leetcode.com/problems/missing-number/) | E | XOR with indices |\n| [ ] | 371 | [Sum of Two Integers](https://leetcode.com/problems/sum-of-two-integers/) | M | XOR + carry |\n| [ ] | 7 | [Reverse Integer](https://leetcode.com/problems/reverse-integer/) | M | Overflow check |\n| [ ] | 137 | [Single Number II](https://leetcode.com/problems/single-number-ii/) | M | Count each bit mod 3 |\n| [ ] | 260 | [Single Number III](https://leetcode.com/problems/single-number-iii/) | M | Split on the lowest set bit |\n| [ ] | 201 | [Bitwise AND of Numbers Range](https://leetcode.com/problems/bitwise-and-of-numbers-range/) | M | Common prefix |\n\n## My Notes\n\n-\n"}, {"id": "19-Advanced-Optional", "file": "19-Advanced-Optional.md", "title": "19 · Advanced (Optional)", "md": "# 19 · Advanced (Optional)\n\n> Do this topic only after 00–18 feel solid. These come up rarely in typical SDE interviews, mostly at Google or in hard rounds. Knowing they **exist** and when to mention them is usually enough.\n\n## Topics\n\n### Segment Tree / Fenwick Tree (BIT)\n- **When:** range queries (sum, min or max) combined with **point updates**, each in O(log n).\n- A Fenwick tree is shorter to write and handles prefix sums. A segment tree is more flexible and can support lazy propagation for range updates.\n\n```python\nclass BIT:\n    def __init__(self, n): self.t = [0] * (n + 1)\n    def update(self, i, d):          # 1-indexed\n        while i < len(self.t):\n            self.t[i] += d; i += i & -i\n    def query(self, i):              # prefix sum [1..i]\n        s = 0\n        while i > 0:\n            s += self.t[i]; i -= i & -i\n        return s\n```\n\n### String matching: KMP / Rabin-Karp / Z-function\n- **When:** finding a pattern inside a text in O(n + m), or finding the longest prefix that is also a suffix.\n- The KMP failure function (LPS array) is the most important part to learn.\n\n### Monotonic queue DP, bitmask DP, digit DP\n- **Bitmask DP:** `dp[mask][i]` for small n (≤ 20), as in the travelling salesman problem or \"visit all nodes\".\n\n### Topological sort + DP on DAGs, Strongly Connected Components (Kosaraju or Tarjan)\n\n### Ordered sets\n- In Python, `sortedcontainers.SortedList` (available on LeetCode) gives O(log n) insert, delete and rank queries.\n\n## Problems\n\n| ✓ | # | Problem | Diff | Pattern |\n|---|---|---------|------|---------|\n| [ ] | 28 | [Find the Index of the First Occurrence in a String](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/) | E | KMP |\n| [ ] | 307 | [Range Sum Query - Mutable](https://leetcode.com/problems/range-sum-query-mutable/) | M | BIT / segment tree |\n| [ ] | 847 | [Shortest Path Visiting All Nodes](https://leetcode.com/problems/shortest-path-visiting-all-nodes/) | H | BFS + bitmask |\n| [ ] | 315 | [Count of Smaller Numbers After Self](https://leetcode.com/problems/count-of-smaller-numbers-after-self/) | H | BIT / merge sort |\n| [ ] | 214 | [Shortest Palindrome](https://leetcode.com/problems/shortest-palindrome/) | H | KMP |\n\n## My Notes\n\n-\n"}], "readme": "# DSA Prep\n\nTopic-wise prep. In each file, read the concepts and templates first, then solve the problems in order (Easy, then Medium, then Hard).\nTemplates are in Python because it's the quickest language to write in interviews. Translate them to Go, C++ or Java if you'll interview in one of those.\n\n## Revision site\n\nOpen `index.html` in a browser. It's built from these `.md` files, so **after editing any `.md`, run `python3 build.py`** and refresh the page.\n\n- **Dashboard:** overall progress, activity heatmap, the next problems to do.\n- **Topic pages:** the notes plus a problem table. Log each attempt as ✓ (solved on my own), ~ (needed a hint) or ✗ (couldn't solve).\n- **Revise:** problems that are due for a re-solve (spaced repetition), plus three flashcard decks: **Pattern drill** (problem → approach), **Spot the technique** (signal → topic) and **Template recall**.\n- **Problems:** every problem in one place, filterable. **Templates:** a one-page cheat sheet of all the templates.\n- **Hide patterns** blurs the pattern column so it doesn't give the answer away.\n\nProgress is saved in your browser. Use **Export** to back it up, and **Import** to restore it.\n\n## How to use each topic file\n\n1. **Read** the \"When to use\" and \"Core concepts\" sections.\n2. **Type out the templates** from memory. Don't just read them.\n3. **Solve the problems**: try each one for 25–30 minutes before looking at hints. Tick `[x]` when you can solve it on your own.\n4. **Write notes** in \"My Notes\": what tripped you up, edge cases, and the key insight in one line.\n5. **Revisit** the problems you couldn't solve after 3 days, then 7, then 21.\n\n## Roadmap (suggested order)\n\nEach phase depends on the ones before it. Do them in order.\n\n| # | Topic | Phase | Status |\n|---|-------|-------|--------|\n| 00 | [Complexity Analysis](00-Complexity-Analysis.md) | Foundations | ⬜ |\n| 01 | [Arrays & Hashing](01-Arrays-and-Hashing.md) | Foundations | ⬜ |\n| 02 | [Two Pointers](02-Two-Pointers.md) | Linear | ⬜ |\n| 03 | [Sliding Window](03-Sliding-Window.md) | Linear | ⬜ |\n| 04 | [Stack & Monotonic Stack](04-Stack.md) | Linear | ⬜ |\n| 05 | [Binary Search](05-Binary-Search.md) | Linear | ⬜ |\n| 06 | [Linked List](06-Linked-List.md) | Linear | ⬜ |\n| 07 | [Trees](07-Trees.md) | Non-linear | ⬜ |\n| 08 | [Tries](08-Tries.md) | Non-linear | ⬜ |\n| 09 | [Heaps / Priority Queue](09-Heaps.md) | Non-linear | ⬜ |\n| 10 | [Backtracking](10-Backtracking.md) | Recursion | ⬜ |\n| 11 | [Graphs](11-Graphs.md) | Graphs | ⬜ |\n| 12 | [Advanced Graphs](12-Advanced-Graphs.md) | Graphs | ⬜ |\n| 13 | [Dynamic Programming: 1D](13-DP-1D.md) | DP | ⬜ |\n| 14 | [Dynamic Programming: 2D](14-DP-2D.md) | DP | ⬜ |\n| 15 | [Greedy](15-Greedy.md) | Misc | ⬜ |\n| 16 | [Intervals](16-Intervals.md) | Misc | ⬜ |\n| 17 | [Math & Geometry](17-Math-and-Geometry.md) | Misc | ⬜ |\n| 18 | [Bit Manipulation](18-Bit-Manipulation.md) | Misc | ⬜ |\n| 19 | [Advanced (Optional)](19-Advanced-Optional.md) | Stretch | ⬜ |\n\nStatus key: ⬜ not started · 🟨 in progress · ✅ done · 🔁 needs revision\n\n## Pacing (about 10 weeks at 2–3 problems a day)\n\n| Weeks | Topics |\n|-------|--------|\n| 1 | 00–03 |\n| 2 | 04–06 |\n| 3 | 07–09 |\n| 4 | 10 |\n| 5 | 11–12 |\n| 6–7 | 13–14 |\n| 8 | 15–19 |\n| 9–10 | Mixed revision, company-tagged problems, mock interviews |\n\n## Interview loop checklist (use on every problem)\n\n1. Restate the problem and confirm the input/output format.\n2. Ask about constraints: size of n, value range, duplicates, negatives, empty input.\n3. Work through a small example by hand.\n4. Describe the brute-force solution and its complexity.\n5. Optimise it, naming the pattern you're using.\n6. Code it while talking through what you're doing.\n7. Dry-run your code on the example, then on edge cases.\n8. State the final time and space complexity.\n\n## Revision log\n\n| Date | Problem | Topic | Result (Solved / Hint / Failed) | Revisit on |\n|------|---------|-------|----------------------------------|------------|\n| | | | | |\n"};
+const LS_KEY = 'dsa-prep-v1';
+const INTERVALS = [1, 3, 7, 21, 45, 90];
+
+/* ---------- utils ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dateStr = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const today = () => dateStr(new Date());
+const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return dateStr(d); };
+const dayDiff = s => Math.round((Date.parse(s) - Date.parse(today())) / 86400000);
+const relDay = s => { const n = dayDiff(s); return n <= 0 ? '<b>due</b>' : n === 1 ? 'tomorrow' : 'in ' + n + 'd'; };
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const md = s => window.marked ? marked.parse(s) : '<pre>' + esc(s) + '</pre>';
+const DIFF = { E: 'Easy', M: 'Medium', H: 'Hard' };
+
+/* ---------- state ---------- */
+function load() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { return {}; } }
+let state = load();
+function norm() { state.problems ||= {}; state.cards ||= {}; state.activity ||= {}; state.settings ||= {}; }
+norm();
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+function bump() { const t = today(); state.activity[t] = (state.activity[t] || 0) + 1; }
+
+/* ---------- parse markdown data ---------- */
+const PROB_RE = /^\|\s*\[( |x|X)\]\s*\|\s*(\d+)\s*\|\s*\[([^\]]+)\]\(([^)]+)\)\s*(🔒)?\s*\|\s*([EMH])\s*\|\s*(.*?)\s*\|\s*$/u;
+function sections(text) {
+  const out = {};
+  text.split(/^## /m).slice(1).forEach(p => { const nl = p.indexOf('\n'); out[p.slice(0, nl).trim()] = p.slice(nl + 1); });
+  return out;
+}
+const TOPICS = DATA.topics.map(t => {
+  const m = t.title.match(/^(\d+)\s*·\s*(.*)$/);
+  const topic = { ...t, num: m ? m[1] : '', name: m ? m[2] : t.title, problems: [], sections: sections(t.md) };
+  t.md.split('\n').forEach(line => {
+    const r = line.match(PROB_RE);
+    if (!r) return;
+    topic.problems.push({
+      num: +r[2], title: r[3], url: r[4], premium: !!r[5], diff: r[6],
+      pattern: r[7].replace('⭐', '').trim(), star: r[7].includes('⭐'),
+      mdDone: r[1].toLowerCase() === 'x', topic: t.id,
+    });
+  });
+  return topic;
+});
+const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+const ALL = TOPICS.flatMap(t => t.problems);
+
+/* ---------- problem status ---------- */
+const pst = p => state.problems[p.num];
+const isSolved = p => { const s = pst(p); return !!(s && s.history.some(h => h.r === 'solved')) || p.mdDone; };
+const lastResult = p => { const s = pst(p); return s && s.history.length ? s.history[s.history.length - 1].r : (p.mdDone ? 'solved' : null); };
+const isDue = p => { const s = pst(p); return !!(s && s.next && s.next <= today()); };
+function logAttempt(num, r) {
+  const s = state.problems[num] ||= { history: [], stage: 0 };
+  s.history.push({ d: today(), r });
+  if (r === 'solved') { s.stage = Math.min((s.stage || 0) + 1, INTERVALS.length - 1); s.next = addDays(INTERVALS[s.stage]); }
+  else if (r === 'hint') { s.stage = 0; s.next = addDays(2); }
+  else { s.stage = 0; s.next = addDays(1); }
+  bump();
+}
+function topicStats(t) {
+  const solved = t.problems.filter(isSolved).length, total = t.problems.length;
+  return { solved, total, pct: total ? Math.round(solved / total * 100) : 0, status: solved === 0 ? 'todo' : solved === total ? 'done' : 'prog' };
+}
+function streak() {
+  let n = 0; const d = new Date();
+  if (!(state.activity[dateStr(d)] > 0)) d.setDate(d.getDate() - 1);
+  while (state.activity[dateStr(d)] > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+/* ---------- shared renderers ---------- */
+const statusDot = r => '<span class="dot ' + (r || '') + '" title="' + (r ? 'Last: ' + r : 'Not attempted') + '"></span>';
+function probRow(p, showTopic) {
+  const s = pst(p), lr = lastResult(p), hide = state.settings.hidePatterns;
+  return '<tr data-num="' + p.num + '" class="r-' + (lr || 'none') + '">' +
+    '<td>' + statusDot(lr) + '</td>' +
+    '<td class="num">' + p.num + '</td>' +
+    '<td><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>' +
+      (p.premium ? ' <span class="tag" title="LeetCode Premium">🔒</span>' : '') +
+      (p.star ? ' <span class="tag star" title="Frequently asked">★</span>' : '') + '</td>' +
+    '<td><span class="diff d-' + p.diff + '">' + DIFF[p.diff] + '</span></td>' +
+    (showTopic ? '<td><a href="#/topic/' + p.topic + '">' + esc(topicById[p.topic].name) + '</a></td>' : '') +
+    '<td class="pattern' + (hide ? ' blur' : '') + '" title="' + (hide ? 'Click to peek' : '') + '">' + esc(p.pattern) + '</td>' +
+    '<td class="meta">' + (s && s.history.length ? s.history.length + '× · next ' + relDay(s.next) : (p.mdDone ? 'ticked in .md' : '—')) + '</td>' +
+    '<td class="acts"><button data-act="solved" title="Solved on my own">✓</button><button data-act="hint" title="Needed a hint">~</button><button data-act="failed" title="Couldn\'t solve">✗</button>' +
+      (s ? '<button data-act="reset" title="Clear history">↺</button>' : '') + '</td></tr>';
+}
+function probTable(list, showTopic) {
+  if (!list.length) return '<div class="panel empty">No problems match.</div>';
+  return '<div class="tablewrap"><table class="probs"><thead><tr><th></th><th>#</th><th>Problem</th><th>Diff</th>' +
+    (showTopic ? '<th>Topic</th>' : '') + '<th>Pattern</th><th class="meta">History</th><th style="text-align:right">Log attempt</th></tr></thead><tbody>' +
+    list.map(p => probRow(p, showTopic)).join('') + '</tbody></table></div>';
+}
+const legend = '<div class="legend"><span>✓ solved on my own</span><span>~ needed a hint</span><span>✗ couldn\'t solve</span><span>Revisits: ✓ → 3, 7, 21, 45, 90 days · ~ → 2 days · ✗ → tomorrow</span></div>';
+
+/* ---------- views ---------- */
+function viewDashboard() {
+  const total = ALL.length, solved = ALL.filter(isSolved).length, due = ALL.filter(isDue).length;
+  const week = Object.entries(state.activity).filter(([d]) => dayDiff(d) > -7).reduce((a, [, n]) => a + n, 0);
+  const byDiff = ['E', 'M', 'H'].map(d => { const ps = ALL.filter(p => p.diff === d); return { d, t: ps.length, s: ps.filter(isSolved).length }; });
+  const nextUp = ALL.filter(p => !isSolved(p) && !pst(p)).slice(0, 6);
+
+  // heatmap: 16 weeks ending today
+  const now = new Date(), start = new Date(now);
+  start.setDate(now.getDate() - (7 * 15 + now.getDay()));
+  let cells = '';
+  for (let d = new Date(start), i = 0; i < 16 * 7; i++, d.setDate(d.getDate() + 1)) {
+    const k = dateStr(d), n = state.activity[k] || 0;
+    const lvl = d > now ? 'future' : n === 0 ? '' : n === 1 ? 'l1' : n <= 3 ? 'l2' : n <= 5 ? 'l3' : 'l4';
+    cells += '<i class="' + lvl + '" title="' + k + ': ' + n + ' reviews"></i>';
+  }
+
+  return '<div class="eyebrow">Overview</div><h1 class="page">Dashboard</h1><p class="sub">Work through the topics in order. Log every attempt so it comes back up for revision.</p>' +
+    '<div class="grid stats">' +
+      '<div class="panel stat"><div class="v">' + solved + '<span class="muted" style="font-size:16px">/' + total + '</span></div><div class="l">Problems solved</div><div class="bar" style="margin-top:10px"><i style="width:' + (solved / total * 100) + '%"></i></div></div>' +
+      '<div class="panel stat"><div class="v">' + due + '</div><div class="l">Due for revision</div>' + (due ? '<a href="#/revise/due/all" style="font-size:13px">Review now →</a>' : '') + '</div>' +
+      '<div class="panel stat"><div class="v">' + streak() + '</div><div class="l">Day streak</div></div>' +
+      '<div class="panel stat"><div class="v">' + week + '</div><div class="l">Reviews in last 7 days</div></div>' +
+    '</div>' +
+    '<div class="grid two">' +
+      '<div class="panel"><h3>Activity</h3><div class="heat">' + cells + '</div>' +
+        '<h3 class="section-gap">By difficulty</h3>' +
+        byDiff.map(x => '<div class="diffrow"><span class="diff d-' + x.d + '">' + DIFF[x.d] + '</span><div class="bar"><i style="width:' + (x.s / x.t * 100) + '%;background:var(--' + { E: 'easy', M: 'med', H: 'hard' }[x.d] + ')"></i></div><span class="n">' + x.s + '/' + x.t + '</span></div>').join('') +
+      '</div>' +
+      '<div class="panel"><h3>Next up</h3>' + (nextUp.length ? '<ol class="nextup">' + nextUp.map(p => '<li><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a> <span class="diff d-' + p.diff + '">' + p.diff + '</span><br><small class="muted"><a class="muted" href="#/topic/' + p.topic + '">' + esc(topicById[p.topic].name) + '</a></small></li>').join('') + '</ol>' : '<p class="muted">Everything attempted. 🎉</p>') +
+        '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn primary" href="#/revise/pattern/all">Pattern drill</a><a class="btn" href="#/revise/template/all">Template recall</a></div></div>' +
+    '</div>' +
+    '<h3>Topics</h3><div class="grid topics-grid">' +
+      TOPICS.map(t => { const s = topicStats(t);
+        return '<a class="panel tcard" href="#/topic/' + t.id + '"><div class="tc-num">' + t.num + '</div><div class="tc-name">' + esc(t.name) + '</div>' +
+          (s.total ? '<div class="bar"><i style="width:' + s.pct + '%"></i></div><div class="tc-foot"><span>' + s.solved + '/' + s.total + ' solved</span>' +
+          '<span class="pill ' + s.status + '">' + { todo: 'Not started', prog: 'In progress', done: 'Done' }[s.status] + '</span></div>'
+          : '<div class="tc-foot"><span>Reading only, no problems</span></div>') + '</a>'; }).join('') +
+    '</div>';
+}
+
+function topicBody(t) {
+  const lines = t.md.split('\n').slice(1), out = [];
+  let inProb = false, inserted = false;
+  for (const l of lines) {
+    if (/^## /.test(l)) inProb = /^## Problems/.test(l);
+    if (inProb && l.trim().startsWith('|')) { if (!inserted) { out.push('<div id="prob-slot"></div>'); inserted = true; } continue; }
+    out.push(l);
+  }
+  return out.join('\n');
+}
+function viewTopic(id) {
+  const t = topicById[id];
+  if (!t) return '<div class="empty">Topic not found.</div>';
+  const s = topicStats(t), i = TOPICS.indexOf(t), prev = TOPICS[i - 1], next = TOPICS[i + 1];
+  return '<div class="topic-head"><div><div class="eyebrow">Topic ' + t.num + '</div><h1 class="page">' + esc(t.name) + '</h1></div>' +
+      '<div class="actions">' + (t.problems.length ? '<a class="btn" href="#/revise/pattern/' + t.id + '">Pattern drill</a>' : '') +
+      '<a class="btn" href="#/revise/template/' + t.id + '">Template recall</a></div></div>' +
+    (t.problems.length ? '<div class="topic-prog"><div class="bar"><i style="width:' + s.pct + '%"></i></div>' + s.solved + ' / ' + s.total + ' solved</div>' : '') +
+    '<article class="prose">' + md(topicBody(t)) + '</article>' +
+    '<div class="pager">' + (prev ? '<a href="#/topic/' + prev.id + '"><small>← Previous</small>' + esc(prev.name) + '</a>' : '<span></span>') +
+      (next ? '<a class="next" href="#/topic/' + next.id + '"><small>Next →</small>' + esc(next.name) + '</a>' : '<span></span>') + '</div>';
+}
+function afterTopic(id) {
+  const slot = $('#prob-slot'), t = topicById[id];
+  if (slot && t) slot.outerHTML = legend + probTable(t.problems, false);
+}
+
+let PF = { q: '', topic: 'all', diff: 'all', status: 'all', star: false };
+function viewProblems() {
+  const q = PF.q.toLowerCase();
+  const list = ALL.filter(p =>
+    (!q || (p.title + ' ' + p.pattern + ' ' + p.num).toLowerCase().includes(q)) &&
+    (PF.topic === 'all' || p.topic === PF.topic) &&
+    (PF.diff === 'all' || p.diff === PF.diff) &&
+    (!PF.star || p.star) &&
+    (PF.status === 'all' || (PF.status === 'unsolved' ? !isSolved(p) : PF.status === 'due' ? isDue(p) : lastResult(p) === PF.status)));
+  const opt = (v, l, cur) => '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + esc(l) + '</option>';
+  return '<div class="eyebrow">All topics</div><h1 class="page">Problems</h1><p class="sub">' + list.length + ' of ' + ALL.length + ' problems</p>' +
+    '<div class="filters">' +
+      '<input type="search" id="pf-q" placeholder="Search title, pattern or number…" value="' + esc(PF.q) + '">' +
+      '<select id="pf-topic">' + opt('all', 'All topics', PF.topic) + TOPICS.filter(t => t.problems.length).map(t => opt(t.id, t.num + ' · ' + t.name, PF.topic)).join('') + '</select>' +
+      '<select id="pf-diff">' + opt('all', 'Any difficulty', PF.diff) + opt('E', 'Easy', PF.diff) + opt('M', 'Medium', PF.diff) + opt('H', 'Hard', PF.diff) + '</select>' +
+      '<select id="pf-status">' + opt('all', 'Any status', PF.status) + opt('unsolved', 'Not solved yet', PF.status) + opt('due', 'Due for revision', PF.status) + opt('solved', 'Last: solved', PF.status) + opt('hint', 'Last: needed hint', PF.status) + opt('failed', 'Last: failed', PF.status) + '</select>' +
+      '<label class="chk"><input type="checkbox" id="pf-star"' + (PF.star ? ' checked' : '') + '> ★ frequent only</label>' +
+    '</div>' + legend + probTable(list, true);
+}
+
+/* --- revise --- */
+function templateChunks(t) {
+  const out = [];
+  Object.entries(t.sections).filter(([k]) => /^Templates?\b/.test(k)).forEach(([, body]) => {
+    for (const m of body.matchAll(/```(\w*)\n([\s\S]*?)```/g)) {
+      m[2].split(/\n\s*\n(?=#)/).forEach(chunk => {
+        const lines = chunk.replace(/\s+$/, '').split('\n');
+        if (lines.length < 2) return;
+        const hasTitle = lines[0].startsWith('#');
+        out.push({ title: hasTitle ? lines[0].replace(/^#\s*/, '') : lines[0].replace(/[:(].*$/, ''), code: (hasTitle ? lines.slice(1) : lines).join('\n'), lang: m[1] || 'python' });
+      });
+    }
+  });
+  return out;
+}
+function buildDeck(mode, scope) {
+  const ts = scope === 'all' ? TOPICS : [topicById[scope]].filter(Boolean);
+  let deck = [];
+  if (mode === 'pattern') {
+    ts.forEach(t => t.problems.forEach(p => deck.push({
+      id: 'p' + p.num, label: 'Which approach solves this?',
+      front: esc(p.title) + '<div class="sub2">#' + p.num + ' · <span class="diff d-' + p.diff + '">' + DIFF[p.diff] + '</span></div>',
+      back: '<div class="ans">' + esc(topicById[p.topic].name) + '</div><div>' + esc(p.pattern) + '</div><p><a href="' + esc(p.url) + '" target="_blank" rel="noopener">Open on LeetCode ↗</a></p>' })));
+  } else if (mode === 'signal') {
+    ts.forEach(t => (t.sections['When to use'] || '').split('\n').filter(l => /^- /.test(l)).forEach((l, i) => deck.push({
+      id: 's' + t.id + i, label: 'Which technique does this signal point to?',
+      front: md(l.slice(2)), back: '<div class="ans">' + esc(t.name) + '</div><p><a href="#/topic/' + t.id + '">Open topic →</a></p>' })));
+  } else if (mode === 'template') {
+    ts.forEach(t => templateChunks(t).forEach((c, i) => deck.push({
+      id: 't' + t.id + i, label: 'Write it from memory, then compare',
+      front: esc(c.title) + '<div class="sub2">' + esc(t.name) + '</div>',
+      back: '<pre><code class="language-' + esc(c.lang) + '">' + esc(c.code) + '</code></pre>' })));
+  }
+  // missed cards float to the top, the rest shuffled
+  const score = c => { const s = state.cards[c.id] || { r: 0, w: 0 }; return (s.w - s.r) + Math.random() * 2; };
+  return shuffle(deck).map(c => [score(c), c]).sort((a, b) => b[0] - a[0]).map(x => x[1]);
+}
+let RV = { key: '' };
+function viewRevise(mode, scope) {
+  mode = ['due', 'pattern', 'signal', 'template'].includes(mode) ? mode : 'due';
+  scope = scope && (scope === 'all' || topicById[scope]) ? scope : 'all';
+  const key = mode + '|' + scope;
+  if (RV.key !== key) RV = { key, mode, scope, deck: mode === 'due' ? [] : buildDeck(mode, scope), i: 0, shown: false, right: 0, wrong: 0 };
+  const dueCount = ALL.filter(isDue).length;
+  const tab = (m, l) => '<a class="' + (m === mode ? 'active' : '') + '" href="#/revise/' + m + '/' + scope + '">' + l + '</a>';
+  let html = '<div class="eyebrow">Revise</div><h1 class="page">Revision</h1><p class="sub">Spaced repetition for problems, plus flashcards for recognising patterns and recalling templates.</p>' +
+    '<div class="revbar"><div class="tabs">' + tab('due', 'Due (' + dueCount + ')') + tab('pattern', 'Pattern drill') + tab('signal', 'Spot the technique') + tab('template', 'Template recall') + '</div>' +
+    '<select id="rv-scope"><option value="all">All topics</option>' + TOPICS.map(t => '<option value="' + t.id + '"' + (t.id === scope ? ' selected' : '') + '>' + t.num + ' · ' + esc(t.name) + '</option>').join('') + '</select></div>';
+
+  if (mode === 'due') {
+    const due = ALL.filter(p => isDue(p) && (scope === 'all' || p.topic === scope));
+    const upcoming = ALL.filter(p => pst(p) && pst(p).next && !isDue(p)).sort((a, b) => pst(a).next.localeCompare(pst(b).next));
+    html += due.length ? '<p class="muted">Re-solve each problem from scratch without looking at your old code, then log how it went.</p>' + legend + probTable(due, true)
+      : '<div class="panel empty"><div class="big">✨</div>Nothing due right now.' + (upcoming.length ? '<br>Next up: <b>' + esc(upcoming[0].title) + '</b> ' + relDay(pst(upcoming[0]).next) + '.' : '<br>Log some attempts on a topic page and they\'ll show up here.') + '</div>';
+    return html;
+  }
+  if (!RV.deck.length) return html + '<div class="panel empty">No cards for this selection.</div>';
+  if (RV.i >= RV.deck.length) {
+    return html + '<div class="card empty"><div class="big">🏁</div><b>Deck finished</b><p>' + RV.right + ' got it · ' + RV.wrong + ' missed</p><button class="btn primary" id="rv-again">Shuffle & go again</button></div>';
+  }
+  const c = RV.deck[RV.i];
+  return html + '<div class="card"><div class="card-meta"><span>Card ' + (RV.i + 1) + ' / ' + RV.deck.length + '</span><span>✓ ' + RV.right + ' · ✗ ' + RV.wrong + '</span></div>' +
+    '<div class="card-label">' + c.label + '</div><div class="card-front">' + c.front + '</div>' +
+    (RV.shown ? '<div class="card-back">' + c.back + '</div>' : '') +
+    '<div class="card-actions">' + (RV.shown
+      ? '<button class="btn good" data-rate="1">Got it<kbd>1</kbd></button><button class="btn bad" data-rate="0">Missed<kbd>2</kbd></button>'
+      : '<button class="btn primary" id="rv-reveal">Reveal<kbd>Space</kbd></button>') +
+    '<button class="btn" id="rv-skip">Skip</button></div></div>';
+}
+function rate(good) {
+  const c = RV.deck[RV.i], s = state.cards[c.id] ||= { r: 0, w: 0 };
+  good ? (s.r++, RV.right++) : (s.w++, RV.wrong++);
+  bump(); save();
+  RV.i++; RV.shown = false; render();
+}
+
+function viewTemplates() {
+  return '<div class="eyebrow">Cheat sheet</div><h1 class="page">Templates</h1><p class="sub">Every code template on one page. Read through it before an interview.</p>' +
+    '<div class="filters"><input type="search" id="tpl-q" placeholder="Filter topics…"></div>' +
+    TOPICS.map(t => {
+      const keys = Object.keys(t.sections).filter(k => /^(Templates?|Core tricks|Constraint|Common (1D|2D) shapes)/.test(k));
+      if (!keys.length) return '';
+      return '<section class="tpl-sec prose" data-name="' + esc(t.name.toLowerCase()) + '"><h2><a href="#/topic/' + t.id + '">' + t.num + ' · ' + esc(t.name) + '</a></h2>' +
+        keys.map(k => (keys.length > 1 ? '<h3>' + esc(k) + '</h3>' : '') + md(t.sections[k])).join('') + '</section>';
+    }).join('');
+}
+function viewGuide() { return '<div class="eyebrow">README</div><article class="prose" style="margin-top:-8px">' + md(DATA.readme.replace(/^# .*\n/, '# DSA Prep\n')).replace('<h1', '<h1 class="page" style="display:block"') + '</article>'; }
+
+/* ---------- sidebar ---------- */
+function renderSidebar(view, arg) {
+  const due = ALL.filter(isDue).length;
+  const nav = (href, label, v, extra = '') => '<a href="' + href + '" class="' + (view === v ? 'active' : '') + '">' + label + extra + '</a>';
+  $('#sidebar').innerHTML = '<div class="brand"><span class="logo">{ }</span>DSA Prep</div>' +
+    '<nav class="nav">' + nav('#/', '📊 Dashboard', 'dashboard') + nav('#/revise/due/all', '🔁 Revise', 'revise', due ? '<span class="badge">' + due + '</span>' : '') +
+      nav('#/problems', '📋 Problems', 'problems') + nav('#/templates', '🧩 Templates', 'templates') + nav('#/guide', '📖 Guide', 'guide') + '</nav>' +
+    '<div><div class="side-label">Topics</div><div class="nav">' + TOPICS.map(t => { const s = topicStats(t);
+      return '<a class="topic-link ' + (view === 'topic' && arg === t.id ? 'active ' : '') + (s.status === 'done' ? 'done' : '') + '" href="#/topic/' + t.id + '"><span class="tnum">' + t.num + '</span><span class="tname">' + esc(t.name.replace('Dynamic Programming', 'DP')) + '</span>' +
+        (s.total ? '<span class="tprog">' + s.solved + '/' + s.total + '</span>' : '') + '</a>'; }).join('') + '</div></div>' +
+    '<div class="side-foot"><button class="btn sm" id="theme">◐ Theme</button><button class="btn sm" id="hidepat">' + (state.settings.hidePatterns ? '👁 Show' : '🙈 Hide') + ' patterns</button>' +
+      '<button class="btn sm" id="export">Export</button><button class="btn sm" id="import">Import</button></div>';
+}
+
+/* ---------- router ---------- */
+let lastRoute = '';
+function render() {
+  const route = location.hash.replace(/^#\/?/, '');
+  const [view = 'dashboard', a, b] = route.split('/').filter(Boolean);
+  const same = route === lastRoute, y = window.scrollY;
+  lastRoute = route;
+  const main = $('#main');
+  const v = view || 'dashboard';
+  main.innerHTML = v === 'topic' ? viewTopic(a) : v === 'problems' ? viewProblems() : v === 'revise' ? viewRevise(a, b)
+    : v === 'templates' ? viewTemplates() : v === 'guide' ? viewGuide() : viewDashboard();
+  if (v === 'topic') afterTopic(a);
+  enhance(main);
+  renderSidebar(['topic', 'problems', 'revise', 'templates', 'guide'].includes(v) ? v : 'dashboard', a);
+  document.body.classList.remove('nav-open');
+  window.scrollTo(0, same ? y : 0);
+}
+function enhance(el) {
+  if (window.hljs) el.querySelectorAll('pre code').forEach(c => hljs.highlightElement(c));
+  el.querySelectorAll('a[href]').forEach(a => {
+    const h = a.getAttribute('href');
+    if (/^https?:/.test(h)) { a.target = '_blank'; a.rel = 'noopener'; }
+    else if (/^[\w-]+\.md$/.test(h)) a.setAttribute('href', '#/topic/' + h.replace(/\.md$/, ''));
+  });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const act = e.target.closest('[data-act]');
+  if (act) {
+    const num = +act.closest('[data-num]').dataset.num;
+    if (act.dataset.act === 'reset') { if (!confirm('Clear the history for #' + num + '?')) return; delete state.problems[num]; }
+    else logAttempt(num, act.dataset.act);
+    save(); render(); return;
+  }
+  const pat = e.target.closest('td.pattern.blur');
+  if (pat) { pat.classList.toggle('peek'); return; }
+  const r = e.target.closest('[data-rate]');
+  if (r) { rate(r.dataset.rate === '1'); return; }
+  const id = e.target.closest('button') && e.target.closest('button').id;
+  if (id === 'rv-reveal') { RV.shown = true; render(); }
+  else if (id === 'rv-skip') { RV.i++; RV.shown = false; render(); }
+  else if (id === 'rv-again') { RV.key = ''; render(); }
+  else if (id === 'menu') document.body.classList.toggle('nav-open');
+  else if (id === 'theme') {
+    const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    state.settings.theme = dark ? 'light' : 'dark'; applyTheme(); save();
+  }
+  else if (id === 'hidepat') { state.settings.hidePatterns = !state.settings.hidePatterns; save(); render(); }
+  else if (id === 'export') {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dsa-progress-' + today() + '.json'; a.click();
+  }
+  else if (id === 'import') $('#importFile').click();
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'pf-q') { PF.q = t.value; const pos = t.selectionStart; render(); const n = $('#pf-q'); n.focus(); n.setSelectionRange(pos, pos); }
+  if (t.id === 'tpl-q') { const q = t.value.toLowerCase(); document.querySelectorAll('.tpl-sec').forEach(s => s.style.display = s.dataset.name.includes(q) ? '' : 'none'); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'pf-topic') PF.topic = t.value; else if (t.id === 'pf-diff') PF.diff = t.value;
+  else if (t.id === 'pf-status') PF.status = t.value; else if (t.id === 'pf-star') PF.star = t.checked;
+  else if (t.id === 'rv-scope') { location.hash = '#/revise/' + (RV.mode || 'due') + '/' + t.value; return; }
+  else if (t.id === 'importFile') {
+    const f = t.files[0]; if (!f) return;
+    f.text().then(txt => { try { state = JSON.parse(txt); norm(); save(); RV.key = ''; render(); alert('Progress imported.'); } catch (err) { alert('That file is not valid progress JSON.'); } });
+    t.value = ''; return;
+  } else return;
+  render();
+});
+document.addEventListener('keydown', e => {
+  if (/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName) || !location.hash.startsWith('#/revise/') || RV.mode === 'due') return;
+  if (e.code === 'Space' && !RV.shown && RV.i < RV.deck.length) { e.preventDefault(); RV.shown = true; render(); }
+  else if (RV.shown && e.key === '1') rate(true);
+  else if (RV.shown && e.key === '2') rate(false);
+});
+function applyTheme() { if (state.settings.theme) document.documentElement.dataset.theme = state.settings.theme; }
+window.addEventListener('hashchange', render);
+applyTheme();
+render();
+</script>
+</body>
+</html>
