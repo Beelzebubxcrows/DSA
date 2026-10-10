@@ -18,33 +18,42 @@
 - **GCD**: `gcd(a, b) = gcd(b, a % b)`. Use it to store a reduced slope `(dy/g, dx/g)` as a hash key (Max Points on a Line).
 - **Sieve of Eratosthenes** finds all primes up to n in O(n log log n).
 - **Cycle detection on numbers**: use a set or Floyd's algorithm (Happy Number).
-- **Modulo** `10**9 + 7`: apply the modulo after every addition or multiplication.
-- In Go, C++ or Java, watch for 32-bit **overflow**.
+- **Modulo** `1_000_000_007`: apply the modulo after every addition or multiplication, and multiply as `long`: `(long) a * b % MOD`.
+- Java's `%` keeps the sign of the left operand, so `-7 % 3 == -1`. Use `((a % m) + m) % m` for a non-negative result.
+- Watch for 32-bit `int` **overflow**: use `long` for products and large sums. `Math.addExact` / `Math.multiplyExact` throw instead of silently wrapping.
 
 ## Templates
 
-```python
-# Rotate image
-n = len(m)
-for i in range(n):
-    for j in range(i + 1, n):
-        m[i][j], m[j][i] = m[j][i], m[i][j]
-for row in m: row.reverse()
+```java
+// Rotate image
+int n = m.length;
+for (int i = 0; i < n; i++)
+    for (int j = i + 1; j < n; j++) {
+        int t = m[i][j]; m[i][j] = m[j][i]; m[j][i] = t;
+    }
+for (int[] row : m)
+    for (int l = 0, r = n - 1; l < r; l++, r--) {
+        int t = row[l]; row[l] = row[r]; row[r] = t;
+    }
 
-# Fast power
-def power(x, n):
-    if n < 0: x, n = 1 / x, -n
-    res = 1
-    while n:
-        if n & 1: res *= x
-        x *= x; n >>= 1
-    return res
+// Fast power
+double power(double x, long n) {   // long: negating Integer.MIN_VALUE overflows int
+    if (n < 0) { x = 1 / x; n = -n; }
+    double res = 1;
+    while (n > 0) {
+        if ((n & 1) == 1) res *= x;
+        x *= x;
+        n >>= 1;
+    }
+    return res;
+}
 
-# Sieve
-is_p = [True] * (n + 1); is_p[0:2] = [False, False]
-for i in range(2, int(n ** 0.5) + 1):
-    if is_p[i]:
-        for j in range(i * i, n + 1, i): is_p[j] = False
+// Sieve
+boolean[] isPrime = new boolean[n + 1];
+for (int i = 2; i <= n; i++) isPrime[i] = true;
+for (int i = 2; (long) i * i <= n; i++)
+    if (isPrime[i])
+        for (int j = i * i; j <= n; j += i) isPrime[j] = false;
 ```
 
 ## Problems

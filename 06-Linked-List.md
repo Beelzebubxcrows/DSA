@@ -17,47 +17,57 @@
 
 ## Templates
 
-```python
-# Reverse
-prev, cur = None, head
-while cur:
-    nxt = cur.next
-    cur.next = prev
-    prev, cur = cur, nxt
-return prev
+```java
+// Reverse
+ListNode prev = null, cur = head;
+while (cur != null) {
+    ListNode nxt = cur.next;
+    cur.next = prev;
+    prev = cur;
+    cur = nxt;
+}
+return prev;
 
-# Middle (returns second middle for even length)
-slow = fast = head
-while fast and fast.next:
-    slow, fast = slow.next, fast.next.next
+// Middle (returns second middle for even length)
+ListNode slow = head, fast = head;
+while (fast != null && fast.next != null) {
+    slow = slow.next;
+    fast = fast.next.next;
+}
 
-# Cycle start (Floyd)
-slow = fast = head
-while fast and fast.next:
-    slow, fast = slow.next, fast.next.next
-    if slow is fast:
-        p = head
-        while p is not slow:
-            p, slow = p.next, slow.next
-        return p
-return None
+// Cycle start (Floyd)
+ListNode slow = head, fast = head;
+while (fast != null && fast.next != null) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow == fast) {
+        ListNode p = head;
+        while (p != slow) {
+            p = p.next;
+            slow = slow.next;
+        }
+        return p;
+    }
+}
+return null;
 
-# Dummy node merge
-dummy = tail = ListNode()
-while a and b:
-    if a.val <= b.val: tail.next, a = a, a.next
-    else: tail.next, b = b, b.next
-    tail = tail.next
-tail.next = a or b
-return dummy.next
+// Dummy node merge
+ListNode dummy = new ListNode(), tail = dummy;
+while (a != null && b != null) {
+    if (a.val <= b.val) { tail.next = a; a = a.next; }
+    else { tail.next = b; b = b.next; }
+    tail = tail.next;
+}
+tail.next = (a != null) ? a : b;
+return dummy.next;
 ```
 
 ## Pitfalls
 
 - Losing the reference to `next` before you rewire the pointers.
-- Not checking `fast and fast.next`.
-- Forgetting to cut the list (`mid.next = None`) when splitting it.
-- Use `is` to compare nodes, not `==`.
+- Not checking `fast != null && fast.next != null`, which throws a `NullPointerException`.
+- Forgetting to cut the list (`mid.next = null`) when splitting it.
+- `==` on nodes compares references, which is what you want for "same node". Compare values with `.val`.
 
 ## Problems
 

@@ -17,41 +17,54 @@
 - **Dijkstra**: uses a min-heap of `(dist, node)`. When you pop an entry whose distance is out of date, skip it. Runs in O(E log V).
 - **Kruskal**: sort the edges by weight, then add each edge with Union-Find if it doesn't create a cycle. Runs in O(E log E).
 - **Prim**: grow the tree from one node, using a min-heap of the edges that cross out of the tree.
-- **Bellman-Ford**: relax every edge V−1 times. For "at most K stops", run K+1 rounds and copy the distance array each round.
+- **Bellman-Ford**: relax every edge V−1 times. For "at most K stops", run K+1 rounds and copy the distance array (`dist.clone()`) each round.
 
 ## Templates
 
-```python
-# Dijkstra
-dist = {src: 0}
-h = [(0, src)]
-while h:
-    d, u = heapq.heappop(h)
-    if d > dist.get(u, float('inf')): continue   # stale
-    for v, w in adj[u]:
-        nd = d + w
-        if nd < dist.get(v, float('inf')):
-            dist[v] = nd
-            heapq.heappush(h, (nd, v))
+```java
+// Dijkstra
+int[] dist = new int[n];
+Arrays.fill(dist, Integer.MAX_VALUE);
+dist[src] = 0;
+PriorityQueue<int[]> h = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));   // {dist, node}
+h.offer(new int[]{0, src});
+while (!h.isEmpty()) {
+    int[] top = h.poll();
+    int d = top[0], u = top[1];
+    if (d > dist[u]) continue;   // stale
+    for (int[] e : adj.get(u)) {   // e = {v, w}
+        int v = e[0], nd = d + e[1];
+        if (nd < dist[v]) {
+            dist[v] = nd;
+            h.offer(new int[]{nd, v});
+        }
+    }
+}
 
-# Kruskal (with Union-Find from topic 11)
-edges.sort(key=lambda e: e[2])
-cost = 0
-for u, v, w in edges:
-    if union(u, v): cost += w
+// Kruskal (with Union-Find from topic 11)
+Arrays.sort(edges, (a, b) -> Integer.compare(a[2], b[2]));
+int cost = 0;
+for (int[] e : edges)
+    if (union(e[0], e[1])) cost += e[2];
 
-# Bellman-Ford with at most K edges
-dist = [inf] * n; dist[src] = 0
-for _ in range(K + 1):
-    tmp = dist[:]
-    for u, v, w in flights:
-        if dist[u] + w < tmp[v]: tmp[v] = dist[u] + w
-    dist = tmp
+// Bellman-Ford with at most K edges
+int[] dist = new int[n];
+Arrays.fill(dist, Integer.MAX_VALUE);
+dist[src] = 0;
+for (int round = 0; round <= K; round++) {
+    int[] tmp = dist.clone();
+    for (int[] f : flights) {   // f = {u, v, w}
+        if (dist[f[0]] == Integer.MAX_VALUE) continue;   // unreachable so far
+        if (dist[f[0]] + f[2] < tmp[f[1]]) tmp[f[1]] = dist[f[0]] + f[2];
+    }
+    dist = tmp;
+}
 ```
 
 ## Pitfalls
 
 - Dijkstra gives wrong answers with negative edge weights.
+- Using `Integer.MAX_VALUE` as infinity and then adding a weight to it, which overflows to a negative number. Skip unreachable nodes first, or use a safe sentinel like `1_000_000_000`.
 - Bellman-Ford with a stop limit: not copying the distance array each round lets a path use more edges than allowed in one round.
 - Forgetting to skip out-of-date heap entries, which makes the algorithm much slower.
 

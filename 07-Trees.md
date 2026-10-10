@@ -17,54 +17,67 @@
 
 ## Templates
 
-```python
-# DFS returning a value (height)
-def height(node):
-    if not node: return 0
-    return 1 + max(height(node.left), height(node.right))
+```java
+// DFS returning a value (height)
+int height(TreeNode node) {
+    if (node == null) return 0;
+    return 1 + Math.max(height(node.left), height(node.right));
+}
 
-# Return-one, update-global (diameter)
-best = 0
-def dfs(node):
-    nonlocal best
-    if not node: return 0
-    L, R = dfs(node.left), dfs(node.right)
-    best = max(best, L + R)
-    return 1 + max(L, R)
+// Return-one, update-global (diameter)
+int best = 0;   // a field, so the recursive method can update it
+int dfs(TreeNode node) {
+    if (node == null) return 0;
+    int L = dfs(node.left), R = dfs(node.right);
+    best = Math.max(best, L + R);
+    return 1 + Math.max(L, R);
+}
 
-# BFS level order
-q = deque([root]) if root else deque()
-while q:
-    level = []
-    for _ in range(len(q)):
-        node = q.popleft()
-        level.append(node.val)
-        if node.left: q.append(node.left)
-        if node.right: q.append(node.right)
-    res.append(level)
+// BFS level order
+List<List<Integer>> res = new ArrayList<>();
+Queue<TreeNode> q = new ArrayDeque<>();
+if (root != null) q.offer(root);
+while (!q.isEmpty()) {
+    List<Integer> level = new ArrayList<>();
+    for (int size = q.size(); size > 0; size--) {
+        TreeNode node = q.poll();
+        level.add(node.val);
+        if (node.left != null) q.offer(node.left);
+        if (node.right != null) q.offer(node.right);
+    }
+    res.add(level);
+}
 
-# Validate BST with bounds
-def valid(node, lo=float('-inf'), hi=float('inf')):
-    if not node: return True
-    if not (lo < node.val < hi): return False
-    return valid(node.left, lo, node.val) and valid(node.right, node.val, hi)
+// Validate BST with bounds (long, so nodes equal to Integer.MIN/MAX_VALUE still pass)
+boolean valid(TreeNode node, long lo, long hi) {
+    if (node == null) return true;
+    if (node.val <= lo || node.val >= hi) return false;
+    return valid(node.left, lo, node.val) && valid(node.right, node.val, hi);
+}
+// call: valid(root, Long.MIN_VALUE, Long.MAX_VALUE)
 
-# Iterative inorder
-st, cur = [], root
-while st or cur:
-    while cur:
-        st.append(cur); cur = cur.left
-    cur = st.pop()
-    visit(cur)
-    cur = cur.right
+// Iterative inorder
+Deque<TreeNode> st = new ArrayDeque<>();
+TreeNode cur = root;
+while (!st.isEmpty() || cur != null) {
+    while (cur != null) {
+        st.push(cur);
+        cur = cur.left;
+    }
+    cur = st.pop();
+    visit(cur);
+    cur = cur.right;
+}
 ```
 
 ## Pitfalls
 
 - Validating a BST by comparing each node only with its direct children.
-- Handling `None` children inconsistently.
+- BST bounds as `int`: a node holding `Integer.MAX_VALUE` fails a `< Integer.MAX_VALUE` check. Use `long` bounds or nullable `Integer` bounds.
+- BFS: writing `for (int i = 0; i < q.size(); i++)` while adding children. `q.size()` changes inside the loop, so read it once first.
+- Handling `null` children inconsistently.
 - Max path sum: forgetting to clamp negative branches to 0.
-- Python's recursion limit is about 1000, which a very deep, skewed tree can exceed. Mention this in the interview.
+- Java's default stack allows a recursion depth of roughly 10⁴, so a skewed tree with 10⁵ nodes can throw `StackOverflowError`. Mention this in the interview and offer the iterative version.
 
 ## Problems
 

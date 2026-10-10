@@ -19,39 +19,45 @@
 
 ## Templates
 
-```python
-# Variable window: longest valid
-l = 0
-state = defaultdict(int)
-best = 0
-for r, x in enumerate(s):
-    state[x] += 1
-    while not valid(state):
-        state[s[l]] -= 1
-        l += 1
-    best = max(best, r - l + 1)
+```java
+// Variable window: longest valid
+int[] count = new int[128];   // or a HashMap for general keys
+int l = 0, best = 0;
+for (int r = 0; r < s.length(); r++) {
+    count[s.charAt(r)]++;
+    while (!valid(count)) {
+        count[s.charAt(l)]--;
+        l++;
+    }
+    best = Math.max(best, r - l + 1);
+}
 
-# Variable window: shortest valid
-l, best = 0, float('inf')
-for r in range(len(a)):
-    add(a[r])
-    while valid():
-        best = min(best, r - l + 1)
-        remove(a[l]); l += 1
+// Variable window: shortest valid
+int l = 0, best = Integer.MAX_VALUE;
+for (int r = 0; r < a.length; r++) {
+    add(a[r]);
+    while (valid()) {
+        best = Math.min(best, r - l + 1);
+        remove(a[l++]);
+    }
+}
+return best == Integer.MAX_VALUE ? 0 : best;
 
-# Monotonic deque for window max
-dq = deque()  # indices, values decreasing
-for i, x in enumerate(nums):
-    while dq and nums[dq[-1]] <= x: dq.pop()
-    dq.append(i)
-    if dq[0] <= i - k: dq.popleft()
-    if i >= k - 1: res.append(nums[dq[0]])
+// Monotonic deque for window max
+Deque<Integer> dq = new ArrayDeque<>();   // indices, values decreasing
+int[] res = new int[nums.length - k + 1];
+for (int i = 0; i < nums.length; i++) {
+    while (!dq.isEmpty() && nums[dq.peekLast()] <= nums[i]) dq.pollLast();
+    dq.offerLast(i);
+    if (dq.peekFirst() <= i - k) dq.pollFirst();
+    if (i >= k - 1) res[i - k + 1] = nums[dq.peekFirst()];
+}
 ```
 
 ## Pitfalls
 
 - Updating the answer at the wrong point. For "longest", update after shrinking. For "shortest", update while shrinking.
-- Forgetting to delete counter keys that reach 0 when you rely on `len(state)`.
+- When you count distinct keys with `map.size()`, remove a key once its count reaches 0, otherwise the size is wrong.
 - Off-by-one errors in the window length `r - l + 1`.
 
 ## Problems

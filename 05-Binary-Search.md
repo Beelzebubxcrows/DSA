@@ -11,44 +11,48 @@
 
 ## Core concepts
 
-- Think of binary search as finding **the first index where `cond(i)` is True** in a sequence like `F F F T T T`.
-- Calculate `mid = (lo + hi) // 2`. In Go, C++ or Java, use `lo + (hi - lo) / 2` to avoid overflow.
+- Think of binary search as finding **the first index where `cond(i)` is true** in a sequence like `F F F T T T`.
+- Calculate `mid = lo + (hi - lo) / 2`. Writing `(lo + hi) / 2` can overflow `int` when both are large.
 - Rotated array: one half is always sorted, so work out which half it is and whether the target falls inside it.
-- Python's `bisect_left` returns the first index with `a[i] >= x`, and `bisect_right` returns the first index with `a[i] > x`.
+- `Arrays.binarySearch` returns *some* matching index (not necessarily the first), or `-(insertionPoint) - 1` if the key is missing. For the first or last occurrence, write the template yourself.
+- `TreeMap.floorKey(x)` / `ceilingKey(x)` give the nearest key ≤ x or ≥ x in O(log n).
 
 ## Templates
 
-```python
-# Universal: first index where cond is True (lo..hi inclusive search space)
-def first_true(lo, hi, cond):
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if cond(mid):
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo   # check cond(lo) if "no answer" is possible
+```java
+// Universal: first index where cond is true (lo..hi inclusive search space)
+int firstTrue(int lo, int hi, IntPredicate cond) {
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (cond.test(mid)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;   // check cond(lo) if "no answer" is possible
+}
 
-# Binary search on answer (e.g. Koko)
-lo, hi = 1, max(piles)
-while lo < hi:
-    mid = (lo + hi) // 2
-    if hours_needed(mid) <= h: hi = mid
-    else: lo = mid + 1
-return lo
+// Binary search on answer (e.g. Koko)
+int lo = 1, hi = Arrays.stream(piles).max().getAsInt();
+while (lo < hi) {
+    int mid = lo + (hi - lo) / 2;
+    if (hoursNeeded(mid) <= h) hi = mid;   // hoursNeeded returns long
+    else lo = mid + 1;
+}
+return lo;
 
-# Classic exact match
-l, r = 0, len(a) - 1
-while l <= r:
-    m = (l + r) // 2
-    if a[m] == t: return m
-    if a[m] < t: l = m + 1
-    else: r = m - 1
-return -1
+// Classic exact match
+int l = 0, r = a.length - 1;
+while (l <= r) {
+    int m = l + (r - l) / 2;
+    if (a[m] == t) return m;
+    if (a[m] < t) l = m + 1;
+    else r = m - 1;
+}
+return -1;
 ```
 
 ## Pitfalls
 
+- Overflow inside the feasibility check: summing hours or loads can exceed `int`. Use a `long` accumulator.
 - Infinite loops from mixing up the templates (`lo < hi` with `hi = mid`, versus `lo <= hi` with `hi = mid - 1`). Pick one template and stick to it.
 - Setting the wrong search bounds for binary search on the answer (lo and hi must include every possible answer).
 - Rotated arrays with duplicates, which make the worst case O(n).
@@ -66,7 +70,7 @@ return -1
 | [ ] | 153 | [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) | M | Compare with the right end |
 | [ ] | 33 | [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/) | M | Find the sorted half |
 | [ ] | 162 | [Find Peak Element](https://leetcode.com/problems/find-peak-element/) | M | Follow the slope |
-| [ ] | 981 | [Time Based Key-Value Store](https://leetcode.com/problems/time-based-key-value-store/) | M | bisect on timestamps |
+| [ ] | 981 | [Time Based Key-Value Store](https://leetcode.com/problems/time-based-key-value-store/) | M | TreeMap floorKey / binary search on timestamps |
 | [ ] | 410 | [Split Array Largest Sum](https://leetcode.com/problems/split-array-largest-sum/) | H | Search on the answer |
 | [ ] | 4 | [Median of Two Sorted Arrays](https://leetcode.com/problems/median-of-two-sorted-arrays/) | H | Partition search |
 

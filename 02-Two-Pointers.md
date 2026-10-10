@@ -17,41 +17,45 @@
 
 ## Templates
 
-```python
-# Opposite ends on a sorted array
-l, r = 0, len(a) - 1
-while l < r:
-    s = a[l] + a[r]
-    if s == target: return [l, r]
-    if s < target: l += 1
-    else: r -= 1
+```java
+// Opposite ends on a sorted array
+int l = 0, r = a.length - 1;
+while (l < r) {
+    int s = a[l] + a[r];
+    if (s == target) return new int[]{l, r};
+    if (s < target) l++;
+    else r--;
+}
 
-# Read/write pointer (in-place filter)
-w = 0
-for x in nums:
-    if keep(x):
-        nums[w] = x
-        w += 1
-return w
+// Read/write pointer (in-place filter)
+int w = 0;
+for (int x : nums)
+    if (keep(x)) nums[w++] = x;
+return w;
 
-# 3Sum skeleton with duplicate skipping
-nums.sort()
-for i in range(len(nums)):
-    if i and nums[i] == nums[i-1]: continue
-    l, r = i + 1, len(nums) - 1
-    while l < r:
-        s = nums[i] + nums[l] + nums[r]
-        if s < 0: l += 1
-        elif s > 0: r -= 1
-        else:
-            res.append([nums[i], nums[l], nums[r]])
-            l += 1
-            while l < r and nums[l] == nums[l-1]: l += 1
+// 3Sum skeleton with duplicate skipping
+Arrays.sort(nums);
+List<List<Integer>> res = new ArrayList<>();
+for (int i = 0; i < nums.length; i++) {
+    if (i > 0 && nums[i] == nums[i - 1]) continue;
+    int l = i + 1, r = nums.length - 1;
+    while (l < r) {
+        int s = nums[i] + nums[l] + nums[r];
+        if (s < 0) l++;
+        else if (s > 0) r--;
+        else {
+            res.add(List.of(nums[i], nums[l], nums[r]));
+            l++;
+            while (l < r && nums[l] == nums[l - 1]) l++;
+        }
+    }
+}
 ```
 
 ## Pitfalls
 
 - Not skipping duplicates in 3Sum or 4Sum.
+- 4Sum: adding four `int`s can overflow. Compute the sum as a `long`.
 - Using `l <= r` when the two pointers must point at different elements.
 - Sorting when you need to return the original indices.
 

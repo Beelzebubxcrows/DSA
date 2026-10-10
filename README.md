@@ -1,11 +1,20 @@
 # DSA Prep
 
 Topic-wise prep. In each file, read the concepts and templates first, then solve the problems in order (Easy, then Medium, then Hard).
-Templates are in Python because it's the quickest language to write in interviews. Translate them to Go, C++ or Java if you'll interview in one of those.
+Templates are in Java, written with the standard library (`HashMap`, `ArrayDeque`, `PriorityQueue`, `TreeMap`) the way you'd write them in an interview. The Pitfalls sections include Java-specific traps such as `int` overflow, `Integer` comparison and comparator overflow.
 
 ## Revision site
 
-Open `index.html` in a browser. It's built from these `.md` files, so **after editing any `.md`, run `python3 build.py`** and refresh the page.
+**Start it with the chat panel (recommended):**
+
+```bash
+cd ~/Projects/Resume/Preparation/DSA
+python3 serve.py        # opens http://localhost:8765. Press Ctrl+C to stop.
+```
+
+Click **💬 Ask Claude** (bottom right) to ask questions, get hints, or have Claude update your plan and notes. Claude can see which page you're on and your progress. It runs as Claude Code in this folder and can edit the `.md` files, but it can't run shell commands. When it changes a file, the site rebuilds and the page reloads automatically.
+
+You can also just open `index.html` directly, without the chat. In that case, **after editing any `.md`, run `python3 build.py`** and refresh the page.
 
 - **Dashboard:** overall progress, activity heatmap, the next problems to do.
 - **Topic pages:** the notes plus a problem table. Log each attempt as ✓ (solved on my own), ~ (needed a hint) or ✗ (couldn't solve).
@@ -13,7 +22,7 @@ Open `index.html` in a browser. It's built from these `.md` files, so **after ed
 - **Problems:** every problem in one place, filterable. **Templates:** a one-page cheat sheet of all the templates.
 - **Hide patterns** blurs the pattern column so it doesn't give the answer away.
 
-Progress is saved in your browser. Use **Export** to back it up, and **Import** to restore it.
+Progress is saved in your browser. Use **Export** to back it up, and **Import** to restore it. The browser treats `http://localhost:8765` and the plain `index.html` file as separate sites, so each keeps its own progress. Pick one and stick with it, or move progress across with Export and Import.
 
 ## How to use each topic file
 

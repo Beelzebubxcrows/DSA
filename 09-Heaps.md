@@ -12,51 +12,56 @@
 
 ## Core concepts
 
-- A binary heap gives O(log n) push and pop and O(1) peek. `heapify` takes O(n).
-- Python's `heapq` is a **min-heap** only. For a max-heap, push `-x`.
+- A binary heap gives O(log n) push and pop and O(1) peek. Building one from a whole collection (`new PriorityQueue<>(list)`) takes O(n).
+- Java's `PriorityQueue` is a **min-heap** by default. For a max-heap, use `new PriorityQueue<>(Collections.reverseOrder())`.
 - **Top K largest**: keep a **min-heap of size K**. This takes O(n log k).
-- Push tuples like `(priority, tiebreak, item)` when the items can't be compared with each other.
+- For pairs or objects, pass a comparator, e.g. `new PriorityQueue<int[]>((a, b) -> Integer.compare(a[0], b[0]))`.
 - **Two heaps for the median**: a max-heap holds the lower half and a min-heap holds the upper half. Keep their sizes within 1 of each other.
 - **Quickselect** finds the Kth element in O(n) on average. It's a good optimisation to mention.
 
 ## Templates
 
-```python
-import heapq
+```java
+// K largest with min-heap of size k
+PriorityQueue<Integer> h = new PriorityQueue<>();
+for (int x : nums) {
+    h.offer(x);
+    if (h.size() > k) h.poll();
+}
+return h.peek();   // kth largest
 
-# K largest with min-heap of size k
-h = []
-for x in nums:
-    heapq.heappush(h, x)
-    if len(h) > k: heapq.heappop(h)
-return h[0]  # kth largest
+// Max-heap
+PriorityQueue<Integer> maxH = new PriorityQueue<>(Collections.reverseOrder());
 
-# Max-heap via negation
-h = [-x for x in nums]; heapq.heapify(h)
-largest = -heapq.heappop(h)
+// Merge k sorted lists
+PriorityQueue<ListNode> h = new PriorityQueue<>((a, b) -> Integer.compare(a.val, b.val));
+for (ListNode node : lists) if (node != null) h.offer(node);
+ListNode dummy = new ListNode(), tail = dummy;
+while (!h.isEmpty()) {
+    ListNode node = h.poll();
+    tail.next = node;
+    tail = node;
+    if (node.next != null) h.offer(node.next);
+}
 
-# Merge k sorted lists
-h = [(node.val, i, node) for i, node in enumerate(lists) if node]
-heapq.heapify(h)
-while h:
-    val, i, node = heapq.heappop(h)
-    ...
-    if node.next: heapq.heappush(h, (node.next.val, i, node.next))
-
-# Two heaps median
-lo, hi = [], []          # lo = max-heap (negated), hi = min-heap
-def add(x):
-    heapq.heappush(lo, -x)
-    heapq.heappush(hi, -heapq.heappop(lo))
-    if len(hi) > len(lo): heapq.heappush(lo, -heapq.heappop(hi))
-def median():
-    return -lo[0] if len(lo) > len(hi) else (-lo[0] + hi[0]) / 2
+// Two heaps median
+PriorityQueue<Integer> lo = new PriorityQueue<>(Collections.reverseOrder());   // lower half, max-heap
+PriorityQueue<Integer> hi = new PriorityQueue<>();                             // upper half, min-heap
+void add(int x) {
+    lo.offer(x);
+    hi.offer(lo.poll());
+    if (hi.size() > lo.size()) lo.offer(hi.poll());
+}
+double median() {
+    return lo.size() > hi.size() ? lo.peek() : ((double) lo.peek() + hi.peek()) / 2;
+}
 ```
 
 ## Pitfalls
 
-- Pushing objects that can't be compared, which causes a TypeError. Add an index as a tiebreaker.
-- Forgetting to negate the value back when using a max-heap.
+- Adding arrays or custom objects without a comparator, which throws `ClassCastException`.
+- Writing the comparator as `(a, b) -> b - a`. It overflows for large or negative values. Use `Integer.compare(b, a)` or `Collections.reverseOrder()`.
+- Iterating over a `PriorityQueue` (or printing it) doesn't give sorted order. Only repeated `poll()` does.
 - Using a heap when sorting once would be simpler.
 
 ## Problems

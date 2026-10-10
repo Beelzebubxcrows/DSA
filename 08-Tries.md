@@ -11,46 +11,55 @@
 
 ## Core concepts
 
-- Each node holds `children: dict[char, Node]` and an `end` flag (or stores the word itself).
+- Each node holds `Node[] children = new Node[26]` for lowercase letters (or a `Map<Character, Node>` for a larger alphabet) and an `end` flag (or stores the word itself).
 - Insert and search take O(L) time, where L is the word length. Space is O(total number of characters).
 - To handle wildcards such as `.`, run a DFS over every child at that position.
 
 ## Template
 
-```python
-class TrieNode:
-    def __init__(self):
-        self.children = {}
-        self.end = False
+```java
+// Trie (lowercase letters)
+class Trie {
+    private static class Node {
+        Node[] children = new Node[26];
+        boolean end;
+    }
+    private final Node root = new Node();
 
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
+    public void insert(String word) {
+        Node node = root;
+        for (char c : word.toCharArray()) {
+            int i = c - 'a';
+            if (node.children[i] == null) node.children[i] = new Node();
+            node = node.children[i];
+        }
+        node.end = true;
+    }
 
-    def insert(self, word):
-        node = self.root
-        for c in word:
-            node = node.children.setdefault(c, TrieNode())
-        node.end = True
+    private Node walk(String s) {
+        Node node = root;
+        for (char c : s.toCharArray()) {
+            node = node.children[c - 'a'];
+            if (node == null) return null;
+        }
+        return node;
+    }
 
-    def _walk(self, s):
-        node = self.root
-        for c in s:
-            if c not in node.children: return None
-            node = node.children[c]
-        return node
+    public boolean search(String word) {
+        Node n = walk(word);
+        return n != null && n.end;
+    }
 
-    def search(self, word):
-        n = self._walk(word); return bool(n and n.end)
-
-    def startsWith(self, prefix):
-        return self._walk(prefix) is not None
+    public boolean startsWith(String prefix) {
+        return walk(prefix) != null;
+    }
+}
 ```
 
 ## Pitfalls
 
 - Word Search II: you need to **prune** found words from the trie, or the solution exceeds the time limit.
-- Forgetting the `end` flag, which makes `search("app")` return True when only "apple" was inserted.
+- Forgetting the `end` flag, which makes `search("app")` return true when only "apple" was inserted.
 
 ## Problems
 

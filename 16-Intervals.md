@@ -17,36 +17,42 @@
 
 ## Templates
 
-```python
-# Merge
-intervals.sort()
-res = [intervals[0]]
-for s, e in intervals[1:]:
-    if s <= res[-1][1]:
-        res[-1][1] = max(res[-1][1], e)
-    else:
-        res.append([s, e])
+```java
+// Merge
+Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+List<int[]> res = new ArrayList<>();
+for (int[] cur : intervals) {
+    int[] last = res.isEmpty() ? null : res.get(res.size() - 1);
+    if (last != null && cur[0] <= last[1]) last[1] = Math.max(last[1], cur[1]);
+    else res.add(cur);
+}
+return res.toArray(new int[0][]);
 
-# Max non-overlapping (activity selection)
-intervals.sort(key=lambda x: x[1])
-count, end = 0, float('-inf')
-for s, e in intervals:
-    if s >= end:
-        count += 1; end = e
+// Max non-overlapping (activity selection)
+Arrays.sort(intervals, (a, b) -> Integer.compare(a[1], b[1]));
+int count = 0;
+long end = Long.MIN_VALUE;
+for (int[] iv : intervals)
+    if (iv[0] >= end) {
+        count++;
+        end = iv[1];
+    }
 
-# Meeting rooms II: heap of end times
-intervals.sort()
-h = []
-for s, e in intervals:
-    if h and h[0] <= s: heapq.heappop(h)
-    heapq.heappush(h, e)
-return len(h)
+// Meeting rooms II: heap of end times
+Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+PriorityQueue<Integer> h = new PriorityQueue<>();
+for (int[] iv : intervals) {
+    if (!h.isEmpty() && h.peek() <= iv[0]) h.poll();
+    h.offer(iv[1]);
+}
+return h.size();
 ```
 
 ## Pitfalls
 
 - Whether touching intervals like `[1,2]` and `[2,3]` count as overlapping depends on the problem. Read it carefully.
 - Sorting by start when the greedy approach needs sorting by end.
+- Sorting with `(a, b) -> a[0] - b[0]`. It overflows when values span the full `int` range (Minimum Number of Arrows has exactly this test). Use `Integer.compare`.
 
 ## Problems
 

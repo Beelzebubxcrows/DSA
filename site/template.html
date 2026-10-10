@@ -150,6 +150,7 @@ label.chk { display:flex; align-items:center; gap:6px; font-size:13px; color:var
 .prose :not(pre) > code { background:var(--code-bg); border:1px solid var(--border); padding:1px 5px; border-radius:5px; font-size:.86em; }
 .prose pre, .card-back pre { background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
 .prose pre code { background:none; padding:0; }
+.prose img { display:block; max-width:100%; height:auto; margin:16px 0; }
 .prose table { border-collapse:collapse; width:100%; font-size:14px; display:block; overflow-x:auto; }
 .prose th, .prose td { border:1px solid var(--border); padding:7px 10px; text-align:left; }
 .prose th { background:var(--panel-2); font-size:13px; }
@@ -195,6 +196,44 @@ kbd { font-family:"JetBrains Mono", monospace; font-size:11px; border:1px solid 
 .muted { color:var(--muted); }
 .section-gap { margin-top:28px; }
 
+/* Chat */
+.chat-fab { position:fixed; right:22px; bottom:22px; z-index:25; border:none; border-radius:999px; padding:12px 18px; background:var(--accent); color:var(--accent-text); font-weight:600; font-size:14px; box-shadow:0 6px 24px rgba(0,0,0,.18); }
+.chat-fab:hover { filter:brightness(1.08); }
+body.chat-open .chat-fab { display:none; }
+.chat { position:fixed; top:0; right:0; z-index:30; width:420px; max-width:100vw; height:100vh; background:var(--panel); border-left:1px solid var(--border); display:flex; flex-direction:column; transform:translateX(100%); transition:transform .2s; box-shadow:-8px 0 40px rgba(0,0,0,.12); }
+body.chat-open .chat { transform:none; }
+@media (min-width: 1380px) { body.chat-open .layout { margin-right:420px; } }
+.chat-head { display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid var(--border); }
+.chat-head .t { font-weight:700; flex:1; min-width:0; }
+.chat-head .t small { display:block; font-weight:400; color:var(--muted); font-size:12px; }
+.chat-log { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:14px; }
+.msg { max-width:100%; min-width:0; font-size:14px; line-height:1.55; }
+.msg.user { align-self:flex-end; background:var(--accent); color:var(--accent-text); padding:9px 13px; border-radius:14px 14px 4px 14px; max-width:85%; white-space:pre-wrap; overflow-wrap:anywhere; }
+.msg.assistant { background:var(--panel-2); padding:10px 14px; border-radius:14px 14px 14px 4px; }
+.msg.assistant p { margin:6px 0; }
+.msg.assistant p:first-child { margin-top:0; } .msg.assistant p:last-child { margin-bottom:0; }
+.msg.assistant pre { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px; overflow-x:auto; font-size:12.5px; }
+.msg.assistant :not(pre) > code { background:var(--code-bg); padding:1px 4px; border-radius:4px; font-size:.88em; }
+.msg.assistant table { border-collapse:collapse; font-size:13px; display:block; overflow-x:auto; }
+.msg.assistant th, .msg.assistant td { border:1px solid var(--border); padding:4px 8px; }
+.msg.assistant ul, .msg.assistant ol { padding-left:20px; margin:6px 0; }
+.msg .tool { font-size:12px; color:var(--muted); margin:6px 0; display:flex; gap:6px; align-items:center; }
+.msg .err { color:var(--hard); font-size:13px; margin-top:6px; }
+.msg .note { color:var(--easy); font-size:12px; margin-top:6px; font-weight:600; }
+.typing { display:inline-flex; gap:4px; padding:4px 0; }
+.typing i { width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite; }
+.typing i:nth-child(2) { animation-delay:.2s; } .typing i:nth-child(3) { animation-delay:.4s; }
+@keyframes blink { 0%, 80%, 100% { opacity:.25; } 40% { opacity:1; } }
+.chat-form { border-top:1px solid var(--border); padding:12px; display:flex; gap:8px; align-items:flex-end; }
+.chat-form textarea { flex:1; min-width:0; resize:none; font:inherit; font-size:14px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); max-height:160px; }
+.chat-form textarea:focus { outline:2px solid var(--accent-soft); border-color:var(--accent); }
+.chips { display:flex; flex-direction:column; gap:6px; }
+.chips button { text-align:left; border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:8px 12px; font-size:13px; }
+.chips button:hover { border-color:var(--accent); }
+.chat-empty { color:var(--muted); font-size:14px; }
+.chat-empty pre { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:10px; font-size:12px; white-space:pre-wrap; color:var(--text); }
+.toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--text); color:var(--bg); padding:10px 18px; border-radius:10px; font-size:14px; z-index:40; }
+
 @media (max-width: 900px) {
   .layout { grid-template-columns:minmax(0,1fr); }
   .sidebar { position:fixed; left:0; top:0; z-index:20; width:280px; transform:translateX(-100%); transition:transform .2s; box-shadow:0 0 40px rgba(0,0,0,.25); }
@@ -215,6 +254,19 @@ kbd { font-family:"JetBrains Mono", monospace; font-size:11px; border:1px solid 
   <main class="main" id="main"></main>
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
+<button class="chat-fab" id="chat-fab">💬 Ask Claude</button>
+<aside class="chat" id="chat" aria-label="Chat with Claude">
+  <div class="chat-head">
+    <div class="t">Ask Claude<small>Ask questions, get hints, or have it update your plan</small></div>
+    <button class="btn sm" id="chat-new" title="Start a new conversation">New chat</button>
+    <button class="btn sm" id="chat-close" title="Close">✕</button>
+  </div>
+  <div class="chat-log" id="chat-log"></div>
+  <form class="chat-form" id="chat-form">
+    <textarea id="chat-input" rows="2" placeholder="Ask anything, or say what to change…  (Enter to send, Shift+Enter for a new line)"></textarea>
+    <button class="btn primary" id="chat-send" type="submit">Send</button>
+  </form>
+</aside>
 <script>
 const DATA = /*__DATA__*/null;
 const LS_KEY = 'dsa-prep-v1';
@@ -250,9 +302,11 @@ function sections(text) {
 const TOPICS = DATA.topics.map(t => {
   const m = t.title.match(/^(\d+)\s*·\s*(.*)$/);
   const topic = { ...t, num: m ? m[1] : '', name: m ? m[2] : t.title, problems: [], sections: sections(t.md) };
+  const seenNums = new Set();
   t.md.split('\n').forEach(line => {
     const r = line.match(PROB_RE);
-    if (!r) return;
+    if (!r || seenNums.has(+r[2])) return;
+    seenNums.add(+r[2]);
     topic.problems.push({
       num: +r[2], title: r[3], url: r[4], premium: !!r[5], diff: r[6],
       pattern: r[7].replace('⭐', '').trim(), star: r[7].includes('⭐'),
@@ -262,7 +316,7 @@ const TOPICS = DATA.topics.map(t => {
   return topic;
 });
 const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
-const ALL = TOPICS.flatMap(t => t.problems);
+const ALL = [...new Map(TOPICS.flatMap(t => t.problems).map(p => [p.num, p])).values()];
 
 /* ---------- problem status ---------- */
 const pst = p => state.problems[p.num];
@@ -354,13 +408,16 @@ function viewDashboard() {
     '</div>';
 }
 
+// Every markdown table that contains problem rows becomes an interactive table in place.
 function topicBody(t) {
   const lines = t.md.split('\n').slice(1), out = [];
-  let inProb = false, inserted = false;
-  for (const l of lines) {
-    if (/^## /.test(l)) inProb = /^## Problems/.test(l);
-    if (inProb && l.trim().startsWith('|')) { if (!inserted) { out.push('<div id="prob-slot"></div>'); inserted = true; } continue; }
-    out.push(l);
+  for (let i = 0; i < lines.length;) {
+    if (!lines[i].trim().startsWith('|')) { out.push(lines[i++]); continue; }
+    const block = [];
+    while (i < lines.length && lines[i].trim().startsWith('|')) block.push(lines[i++]);
+    const nums = block.map(l => l.match(PROB_RE)).filter(Boolean).map(r => r[2]);
+    if (nums.length) out.push('', '<div class="prob-slot" data-nums="' + nums.join(',') + '"></div>', '');
+    else out.push(...block);
   }
   return out.join('\n');
 }
@@ -377,8 +434,13 @@ function viewTopic(id) {
       (next ? '<a class="next" href="#/topic/' + next.id + '"><small>Next →</small>' + esc(next.name) + '</a>' : '<span></span>') + '</div>';
 }
 function afterTopic(id) {
-  const slot = $('#prob-slot'), t = topicById[id];
-  if (slot && t) slot.outerHTML = legend + probTable(t.problems, false);
+  const t = topicById[id];
+  if (!t) return;
+  const byNum = Object.fromEntries(t.problems.map(p => [p.num, p]));
+  document.querySelectorAll('.prob-slot').forEach((slot, i) => {
+    const list = [...new Set(slot.dataset.nums.split(','))].map(n => byNum[n]).filter(Boolean);
+    slot.outerHTML = (i === 0 ? legend : '') + probTable(list, false);
+  });
 }
 
 let PF = { q: '', topic: 'all', diff: 'all', status: 'all', star: false };
@@ -402,15 +464,24 @@ function viewProblems() {
 }
 
 /* --- revise --- */
+// Code templates: whole "## Template(s)" sections, plus "### Template" blocks inside subtopic sections.
+function templateBodies(t) {
+  const out = [];
+  Object.entries(t.sections).forEach(([k, body]) => {
+    if (/^Templates?\b/.test(k)) { out.push([k, body]); return; }
+    body.split(/^### /m).slice(1).filter(p => /^Templates?\b/.test(p)).forEach(p => out.push([k, p.slice(p.indexOf('\n') + 1)]));
+  });
+  return out;
+}
 function templateChunks(t) {
   const out = [];
-  Object.entries(t.sections).filter(([k]) => /^Templates?\b/.test(k)).forEach(([, body]) => {
+  templateBodies(t).forEach(([, body]) => {
     for (const m of body.matchAll(/```(\w*)\n([\s\S]*?)```/g)) {
-      m[2].split(/\n\s*\n(?=#)/).forEach(chunk => {
+      m[2].split(/\n\s*\n(?=#|\/\/)/).forEach(chunk => {
         const lines = chunk.replace(/\s+$/, '').split('\n');
         if (lines.length < 2) return;
-        const hasTitle = lines[0].startsWith('#');
-        out.push({ title: hasTitle ? lines[0].replace(/^#\s*/, '') : lines[0].replace(/[:(].*$/, ''), code: (hasTitle ? lines.slice(1) : lines).join('\n'), lang: m[1] || 'python' });
+        const hasTitle = /^(#|\/\/)/.test(lines[0]);
+        out.push({ title: hasTitle ? lines[0].replace(/^(#|\/\/)\s*/, '') : lines[0].replace(/[:({].*$/, '').trim(), code: (hasTitle ? lines.slice(1) : lines).join('\n'), lang: m[1] || 'java' });
       });
     }
   });
@@ -481,10 +552,13 @@ function viewTemplates() {
   return '<div class="eyebrow">Cheat sheet</div><h1 class="page">Templates</h1><p class="sub">Every code template on one page. Read through it before an interview.</p>' +
     '<div class="filters"><input type="search" id="tpl-q" placeholder="Filter topics…"></div>' +
     TOPICS.map(t => {
-      const keys = Object.keys(t.sections).filter(k => /^(Templates?|Core tricks|Constraint|Common (1D|2D) shapes)/.test(k));
-      if (!keys.length) return '';
+      const parts = [
+        ...Object.keys(t.sections).filter(k => /^(Core tricks|Constraint|Common (1D|2D) shapes)/.test(k)).map(k => [k, t.sections[k]]),
+        ...templateBodies(t),
+      ];
+      if (!parts.length) return '';
       return '<section class="tpl-sec prose" data-name="' + esc(t.name.toLowerCase()) + '"><h2><a href="#/topic/' + t.id + '">' + t.num + ' · ' + esc(t.name) + '</a></h2>' +
-        keys.map(k => (keys.length > 1 ? '<h3>' + esc(k) + '</h3>' : '') + md(t.sections[k])).join('') + '</section>';
+        parts.map(([k, body]) => (parts.length > 1 ? '<h3>' + esc(k) + '</h3>' : '') + md(body)).join('') + '</section>';
     }).join('');
 }
 function viewGuide() { return '<div class="eyebrow">README</div><article class="prose" style="margin-top:-8px">' + md(DATA.readme.replace(/^# .*\n/, '# DSA Prep\n')).replace('<h1', '<h1 class="page" style="display:block"') + '</article>'; }
@@ -581,6 +655,160 @@ document.addEventListener('keydown', e => {
   else if (RV.shown && e.key === '1') rate(true);
   else if (RV.shown && e.key === '2') rate(false);
 });
+/* ---------- chat (needs serve.py) ---------- */
+const CHAT_KEY = 'dsa-chat-v1';
+let chat = (() => { try { return JSON.parse(localStorage.getItem(CHAT_KEY)) || {}; } catch (e) { return {}; } })();
+chat.msgs ||= [];
+let chatBusy = false, chatAbort = null, serverOk = null, chatFrame = 0;
+const saveChat = () => { try { localStorage.setItem(CHAT_KEY, JSON.stringify(chat)); } catch (e) {} };
+const SUGGESTIONS = [
+  'Explain the topic I\'m on in simple terms',
+  'What should I study next, based on my progress?',
+  'Give me a hint for a problem I\'m stuck on (no full solution)',
+  'Add 3 more medium problems to the topic I\'m on',
+];
+const TOOL_LABEL = { Edit: '✏️ Edited', Write: '✏️ Wrote', Read: '📖 Read', Glob: '🔎 Listed', Grep: '🔎 Searched', WebSearch: '🌐 Searched the web for', WebFetch: '🌐 Fetched' };
+
+function chatContext() {
+  const route = location.hash.replace(/^#\/?/, '') || 'dashboard';
+  const [v, a] = route.split('/');
+  const page = v === 'topic' && topicById[a] ? 'Topic page: ' + topicById[a].file + ' (' + topicById[a].name + ')' : 'Page: ' + (v || 'dashboard');
+  const prog = TOPICS.filter(t => t.problems.length).map(t => { const s = topicStats(t); return t.num + ' ' + t.name + ' ' + s.solved + '/' + s.total; }).join('; ');
+  const recent = Object.entries(state.problems)
+    .flatMap(([n, s]) => s.history.map(h => ({ n, ...h })))
+    .sort((x, y) => y.d.localeCompare(x.d)).slice(0, 10)
+    .map(h => { const p = ALL.find(q => q.num === +h.n); return '#' + h.n + ' ' + (p ? p.title : '') + ': ' + h.r + ' on ' + h.d; }).join('; ');
+  const due = ALL.filter(isDue).map(p => '#' + p.num + ' ' + p.title).join('; ');
+  return [page, 'Today: ' + today(), 'Solved per topic: ' + prog, 'Due for revision: ' + (due || 'none'), 'Recent attempts: ' + (recent || 'none')].join('\n');
+}
+
+function msgHtml(m, live) {
+  if (m.role === 'user') return '<div class="msg user">' + esc(m.text) + '</div>';
+  let h = '';
+  for (const p of m.parts || []) {
+    if (p.k === 'text') h += md(p.v);
+    else h += '<div class="tool">' + (TOOL_LABEL[p.name] || '⚙️ ' + esc(p.name)) + ' <code>' + esc(p.detail || '') + '</code></div>';
+  }
+  if (live) h += '<div class="typing"><i></i><i></i><i></i></div>';
+  if (m.stopped) h += '<div class="err">Stopped.</div>';
+  if (m.error) h += '<div class="err">⚠️ ' + esc(m.error) + '</div>';
+  if (m.rebuilt) h += '<div class="note">✓ Notes updated, and the site was rebuilt</div>';
+  return '<div class="msg assistant">' + h + '</div>';
+}
+
+function renderChat() {
+  document.body.classList.toggle('chat-open', !!chat.open);
+  const log = $('#chat-log');
+  if (serverOk === false) {
+    log.innerHTML = '<div class="chat-empty"><p><b>Chat needs the local server.</b> This page was opened as a plain file, so it can\'t reach Claude.</p>' +
+      '<p>In Terminal, run:</p><pre>cd ~/Projects/Resume/Preparation/DSA\npython3 serve.py</pre><p>Then use the page it opens (<code>http://localhost:8765</code>). Progress saved in this file version stays here. Move it across with <b>Export</b> and <b>Import</b>.</p></div>';
+  } else if (!chat.msgs.length) {
+    log.innerHTML = '<div class="chat-empty"><p>Claude can see which page you\'re on and your progress. It can also edit your notes and plan, and the site updates automatically.</p></div>' +
+      '<div class="chips">' + SUGGESTIONS.map(s => '<button type="button" data-suggest="' + esc(s) + '">' + esc(s) + '</button>').join('') + '</div>';
+  } else {
+    log.innerHTML = chat.msgs.map((m, i) => msgHtml(m, chatBusy && i === chat.msgs.length - 1)).join('');
+    if (window.hljs) log.querySelectorAll('pre code').forEach(c => hljs.highlightElement(c));
+    enhance(log);
+  }
+  log.scrollTop = log.scrollHeight;
+  const send = $('#chat-send');
+  send.textContent = chatBusy ? 'Stop' : 'Send';
+  send.classList.toggle('primary', !chatBusy);
+  $('#chat-input').disabled = serverOk === false;
+}
+
+function updateLive() {
+  if (chatFrame) return;
+  chatFrame = requestAnimationFrame(() => {
+    chatFrame = 0;
+    const log = $('#chat-log'), last = log.lastElementChild;
+    const nearBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+    if (last) last.outerHTML = msgHtml(chat.msgs[chat.msgs.length - 1], chatBusy);
+    if (nearBottom) log.scrollTop = log.scrollHeight;
+  });
+}
+
+function onChatEvent(ev, msg) {
+  if (ev.t === 'delta') {
+    const last = msg.parts[msg.parts.length - 1];
+    if (last && last.k === 'text') last.v += ev.text; else msg.parts.push({ k: 'text', v: ev.text });
+  } else if (ev.t === 'turn') {
+    const last = msg.parts[msg.parts.length - 1];
+    if (last && last.k === 'text' && !last.v.endsWith('\n\n')) last.v += '\n\n';
+  } else if (ev.t === 'tool') msg.parts.push({ k: 'tool', name: ev.name, detail: ev.detail });
+  else if (ev.t === 'done') { if (ev.session_id) chat.session_id = ev.session_id; if (ev.is_error) msg.error = ev.error || 'Claude returned an error.'; }
+  else if (ev.t === 'error') msg.error = ev.text;
+  else if (ev.t === 'rebuilt') msg.rebuilt = true;
+  updateLive();
+}
+
+async function sendChat(text) {
+  text = text.trim();
+  if (!text || chatBusy || serverOk === false) return;
+  const msg = { role: 'assistant', parts: [] };
+  chat.msgs.push({ role: 'user', text }, msg);
+  chatBusy = true; renderChat(); saveChat();
+  chatAbort = new AbortController();
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: chatAbort.signal,
+      body: JSON.stringify({ message: text, session_id: chat.session_id, context: chatContext() }),
+    });
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    const reader = res.body.getReader(), dec = new TextDecoder();
+    let buf = '';
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i); buf = buf.slice(i + 1);
+        if (line.trim()) onChatEvent(JSON.parse(line), msg);
+      }
+    }
+  } catch (e) {
+    if (e.name === 'AbortError') msg.stopped = true;
+    else msg.error = 'Couldn\'t reach the local server. Is serve.py still running? (' + e.message + ')';
+  }
+  chatBusy = false; chatAbort = null; saveChat(); renderChat();
+  if (msg.rebuilt) {
+    const t = document.createElement('div'); t.className = 'toast'; t.textContent = 'Notes updated. Reloading…';
+    document.body.appendChild(t);
+    setTimeout(() => location.reload(), 900);
+  }
+}
+
+$('#chat-form').addEventListener('submit', e => {
+  e.preventDefault();
+  if (chatBusy) { chatAbort && chatAbort.abort(); return; }
+  const inp = $('#chat-input'); const text = inp.value; inp.value = ''; inp.style.height = '';
+  sendChat(text);
+});
+$('#chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('#chat-form').requestSubmit(); }
+});
+$('#chat-input').addEventListener('input', e => { const t = e.target; t.style.height = ''; t.style.height = Math.min(t.scrollHeight, 160) + 'px'; });
+$('#chat-fab').addEventListener('click', () => { chat.open = true; saveChat(); renderChat(); $('#chat-input').focus(); });
+$('#chat-close').addEventListener('click', () => { chat.open = false; saveChat(); renderChat(); });
+$('#chat-new').addEventListener('click', () => {
+  if (chatBusy) chatAbort && chatAbort.abort();
+  chat.msgs = []; delete chat.session_id; saveChat(); renderChat(); $('#chat-input').focus();
+});
+$('#chat-log').addEventListener('click', e => { const b = e.target.closest('[data-suggest]'); if (b) sendChat(b.dataset.suggest); });
+
+(async () => {
+  // The chat only exists on this Mac (serve.py). On the live site, remove it entirely.
+  if (!['localhost', '127.0.0.1', ''].includes(location.hostname)) {
+    $('#chat-fab').remove(); $('#chat').remove(); document.body.classList.remove('chat-open');
+    return;
+  }
+  if (location.protocol.startsWith('http')) {
+    try { serverOk = (await fetch('/api/health')).ok; } catch (e) { serverOk = false; }
+  } else serverOk = false;
+  renderChat();
+})();
+
 function applyTheme() { if (state.settings.theme) document.documentElement.dataset.theme = state.settings.theme; }
 window.addEventListener('hashchange', render);
 applyTheme();

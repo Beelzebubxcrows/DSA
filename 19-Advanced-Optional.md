@@ -8,17 +8,19 @@
 - **When:** range queries (sum, min or max) combined with **point updates**, each in O(log n).
 - A Fenwick tree is shorter to write and handles prefix sums. A segment tree is more flexible and can support lazy propagation for range updates.
 
-```python
-class BIT:
-    def __init__(self, n): self.t = [0] * (n + 1)
-    def update(self, i, d):          # 1-indexed
-        while i < len(self.t):
-            self.t[i] += d; i += i & -i
-    def query(self, i):              # prefix sum [1..i]
-        s = 0
-        while i > 0:
-            s += self.t[i]; i -= i & -i
-        return s
+```java
+class BIT {
+    int[] t;
+    BIT(int n) { t = new int[n + 1]; }
+    void update(int i, int d) {      // 1-indexed
+        for (; i < t.length; i += i & -i) t[i] += d;
+    }
+    int query(int i) {               // prefix sum [1..i]
+        int s = 0;
+        for (; i > 0; i -= i & -i) s += t[i];
+        return s;
+    }
+}
 ```
 
 ### String matching: KMP / Rabin-Karp / Z-function
@@ -31,7 +33,7 @@ class BIT:
 ### Topological sort + DP on DAGs, Strongly Connected Components (Kosaraju or Tarjan)
 
 ### Ordered sets
-- In Python, `sortedcontainers.SortedList` (available on LeetCode) gives O(log n) insert, delete and rank queries.
+- In Java, `TreeSet` / `TreeMap` give O(log n) insert, delete, `floor`, `ceiling`, `lower` and `higher`. They don't support rank queries (the index of an element), so use a BIT or segment tree for those.
 
 ## Problems
 

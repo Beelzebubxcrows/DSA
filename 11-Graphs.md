@@ -11,7 +11,7 @@
 
 ## Core concepts
 
-- **Representations**: an adjacency list (`defaultdict(list)`), or an implicit grid where each cell's neighbours are found with direction vectors.
+- **Representations**: an adjacency list (`List<List<Integer>>` with one `ArrayList` per node, or a `Map<Integer, List<Integer>>` for sparse labels), or an implicit grid where each cell's neighbours are found with direction vectors.
 - **DFS** is good for reachability, components, cycle detection and flood fill.
 - **BFS** gives the **shortest path in an unweighted graph**. **Multi-source BFS** starts with every source in the queue (rotting oranges, walls and gates).
 - **Topological sort (Kahn's algorithm)**: start the BFS from nodes with in-degree 0. If you process fewer than n nodes, the graph has a cycle.
@@ -23,57 +23,71 @@
 
 ## Templates
 
-```python
-DIRS = ((1,0),(-1,0),(0,1),(0,-1))
+```java
+int[][] DIRS = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-# Grid DFS (flood fill)
-def dfs(r, c):
-    if not (0 <= r < R and 0 <= c < C) or grid[r][c] != '1': return
-    grid[r][c] = '0'
-    for dr, dc in DIRS: dfs(r+dr, c+dc)
+// Grid DFS (flood fill)
+void dfs(int r, int c) {
+    if (r < 0 || r >= R || c < 0 || c >= C || grid[r][c] != '1') return;
+    grid[r][c] = '0';
+    for (int[] d : DIRS) dfs(r + d[0], c + d[1]);
+}
 
-# BFS shortest path (unweighted)
-q = deque([(start, 0)]); seen = {start}
-while q:
-    node, d = q.popleft()
-    if node == target: return d
-    for nb in adj[node]:
-        if nb not in seen:
-            seen.add(nb); q.append((nb, d + 1))
+// BFS shortest path (unweighted)
+Queue<Integer> q = new ArrayDeque<>();
+boolean[] seen = new boolean[n];
+q.offer(start); seen[start] = true;
+for (int d = 0; !q.isEmpty(); d++) {
+    for (int size = q.size(); size > 0; size--) {
+        int node = q.poll();
+        if (node == target) return d;
+        for (int nb : adj.get(node))
+            if (!seen[nb]) { seen[nb] = true; q.offer(nb); }
+    }
+}
+return -1;
 
-# Topological sort (Kahn)
-indeg = [0] * n
-for u, v in edges: adj[u].append(v); indeg[v] += 1
-q = deque(i for i in range(n) if indeg[i] == 0)
-order = []
-while q:
-    u = q.popleft(); order.append(u)
-    for v in adj[u]:
-        indeg[v] -= 1
-        if indeg[v] == 0: q.append(v)
-has_cycle = len(order) < n
+// Topological sort (Kahn)
+List<List<Integer>> adj = new ArrayList<>();
+for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
+int[] indeg = new int[n];
+for (int[] e : edges) { adj.get(e[0]).add(e[1]); indeg[e[1]]++; }
+Queue<Integer> q = new ArrayDeque<>();
+for (int i = 0; i < n; i++) if (indeg[i] == 0) q.offer(i);
+List<Integer> order = new ArrayList<>();
+while (!q.isEmpty()) {
+    int u = q.poll();
+    order.add(u);
+    for (int v : adj.get(u))
+        if (--indeg[v] == 0) q.offer(v);
+}
+boolean hasCycle = order.size() < n;
 
-# Union-Find
-parent = list(range(n)); rank = [0] * n
-def find(x):
-    while parent[x] != x:
-        parent[x] = parent[parent[x]]
-        x = parent[x]
-    return x
-def union(a, b):
-    ra, rb = find(a), find(b)
-    if ra == rb: return False
-    if rank[ra] < rank[rb]: ra, rb = rb, ra
-    parent[rb] = ra
-    if rank[ra] == rank[rb]: rank[ra] += 1
-    return True
+// Union-Find
+int[] parent = new int[n], rank = new int[n];
+for (int i = 0; i < n; i++) parent[i] = i;
+int find(int x) {
+    while (parent[x] != x) {
+        parent[x] = parent[parent[x]];
+        x = parent[x];
+    }
+    return x;
+}
+boolean union(int a, int b) {
+    int ra = find(a), rb = find(b);
+    if (ra == rb) return false;
+    if (rank[ra] < rank[rb]) { int t = ra; ra = rb; rb = t; }
+    parent[rb] = ra;
+    if (rank[ra] == rank[rb]) rank[ra]++;
+    return true;
+}
 ```
 
 ## Pitfalls
 
 - Marking a node visited when you **pop** it in BFS instead of when you **push** it, which leads to duplicate work.
 - Getting the direction of prerequisite edges backwards.
-- Recursion depth on large grids. Mention that an iterative BFS avoids it.
+- Recursion depth on large grids: DFS on a 300×300 grid can go 90,000 calls deep and throw `StackOverflowError`. Mention that an iterative BFS avoids it.
 - Forgetting isolated nodes (nodes with no edges).
 
 ## Problems

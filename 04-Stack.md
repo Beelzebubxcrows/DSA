@@ -12,39 +12,45 @@
 
 ## Core concepts
 
-- LIFO, with O(1) push, pop and peek.
+- LIFO, with O(1) push, pop and peek. In Java, use `Deque<Integer> st = new ArrayDeque<>()` with `push`, `pop` and `peek`. Avoid the old `Stack` class, which is synchronized and slower.
 - **Monotonic stack**: keeps elements in increasing or decreasing order. When a new element breaks the order, pop the stack. Each popped element has just found its "next greater or smaller" element.
   - Use a decreasing stack to find the next **greater** element, and an increasing stack to find the next **smaller** one.
 - Store **indices** rather than values so you can calculate distances and widths.
-- Min stack: store the pair `(value, current_min)` at each level.
+- Min stack: store the pair `int[]{value, currentMin}` at each level.
 
 ## Templates
 
-```python
-# Next greater element (to the right)
-res = [-1] * n
-st = []  # indices, values decreasing
-for i, x in enumerate(nums):
-    while st and nums[st[-1]] < x:
-        res[st.pop()] = x
-    st.append(i)
+```java
+// Next greater element (to the right)
+int[] res = new int[n];
+Arrays.fill(res, -1);
+Deque<Integer> st = new ArrayDeque<>();   // indices, values decreasing
+for (int i = 0; i < n; i++) {
+    while (!st.isEmpty() && nums[st.peek()] < nums[i])
+        res[st.pop()] = nums[i];
+    st.push(i);
+}
 
-# Circular variant: iterate 2n, index i % n
+// Circular variant: iterate i from 0 to 2n - 1, use i % n
 
-# Largest rectangle in histogram
-st, best = [], 0
-for i, h in enumerate(heights + [0]):
-    start = i
-    while st and st[-1][1] > h:
-        idx, ht = st.pop()
-        best = max(best, ht * (i - idx))
-        start = idx
-    st.append((start, h))
+// Largest rectangle in histogram
+Deque<Integer> st = new ArrayDeque<>();   // indices, heights increasing
+int best = 0;
+for (int i = 0; i <= heights.length; i++) {
+    int h = i == heights.length ? 0 : heights[i];   // sentinel 0 empties the stack
+    while (!st.isEmpty() && heights[st.peek()] > h) {
+        int height = heights[st.pop()];
+        int left = st.isEmpty() ? -1 : st.peek();
+        best = Math.max(best, height * (i - left - 1));
+    }
+    st.push(i);
+}
 ```
 
 ## Pitfalls
 
-- Popping from an empty stack. Always check `while st and ...`.
+- Popping from an empty stack. `pop()` on an empty `ArrayDeque` throws, so always check `!st.isEmpty() && ...`.
+- `ArrayDeque` doesn't accept `null`.
 - Elements left on the stack at the end need handling. Use a sentinel value or a post-processing step.
 - Deciding between strict and non-strict comparison (`<` vs `<=`) when values are duplicated.
 

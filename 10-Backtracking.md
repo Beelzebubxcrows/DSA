@@ -19,42 +19,54 @@
 
 ## Templates
 
-```python
-# Subsets / combinations
-res, path = [], []
-def bt(start):
-    res.append(path[:])              # copy!
-    for i in range(start, len(nums)):
-        if i > start and nums[i] == nums[i-1]: continue  # dedupe (sorted)
-        path.append(nums[i])
-        bt(i + 1)                    # i (not i+1) if reuse allowed
-        path.pop()
-bt(0)
+```java
+// Subsets / combinations
+List<List<Integer>> res = new ArrayList<>();
+List<Integer> path = new ArrayList<>();
+void bt(int start) {
+    res.add(new ArrayList<>(path));                        // copy!
+    for (int i = start; i < nums.length; i++) {
+        if (i > start && nums[i] == nums[i - 1]) continue;  // dedupe (sorted)
+        path.add(nums[i]);
+        bt(i + 1);                                          // i (not i + 1) if reuse allowed
+        path.remove(path.size() - 1);
+    }
+}
 
-# Permutations
-used = [False] * n
-def bt():
-    if len(path) == n:
-        res.append(path[:]); return
-    for i in range(n):
-        if used[i]: continue
-        used[i] = True; path.append(nums[i])
-        bt()
-        used[i] = False; path.pop()
+// Permutations
+boolean[] used = new boolean[n];
+void bt() {
+    if (path.size() == n) {
+        res.add(new ArrayList<>(path));
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        if (used[i]) continue;
+        used[i] = true; path.add(nums[i]);
+        bt();
+        used[i] = false; path.remove(path.size() - 1);
+    }
+}
 
-# Grid backtracking (word search)
-def dfs(r, c, i):
-    if i == len(word): return True
-    if not (0 <= r < R and 0 <= c < C) or board[r][c] != word[i]: return False
-    tmp, board[r][c] = board[r][c], '#'
-    found = any(dfs(r+dr, c+dc, i+1) for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)))
-    board[r][c] = tmp
-    return found
+// Grid backtracking (word search)
+int[][] DIRS = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+boolean dfs(int r, int c, int i) {
+    if (i == word.length()) return true;
+    if (r < 0 || r >= R || c < 0 || c >= C || board[r][c] != word.charAt(i)) return false;
+    char tmp = board[r][c];
+    board[r][c] = '#';
+    boolean found = false;
+    for (int[] d : DIRS)
+        if (dfs(r + d[0], c + d[1], i + 1)) { found = true; break; }
+    board[r][c] = tmp;
+    return found;
+}
 ```
 
 ## Pitfalls
 
-- Appending `path` instead of `path[:]`, which means every result ends up pointing to the same list.
+- Adding `path` instead of `new ArrayList<>(path)`, which means every result ends up pointing to the same list.
+- On a `List<Integer>`, `remove(int)` removes by index but `remove(Integer)` removes by value. Always undo with `path.remove(path.size() - 1)`.
 - Forgetting to undo the choice (the pop, or restoring a grid cell).
 - Getting the dedupe condition wrong, or forgetting to sort first.
 

@@ -20,29 +20,37 @@
 
 ## Templates
 
-```python
-# Jump Game: reachability
-far = 0
-for i, x in enumerate(nums):
-    if i > far: return False
-    far = max(far, i + x)
-return True
+```java
+// Jump Game: reachability
+int far = 0;
+for (int i = 0; i < nums.length; i++) {
+    if (i > far) return false;
+    far = Math.max(far, i + nums[i]);
+}
+return true;
 
-# Jump Game II: BFS-by-levels
-jumps = end = far = 0
-for i in range(len(nums) - 1):
-    far = max(far, i + nums[i])
-    if i == end:
-        jumps += 1; end = far
-return jumps
+// Jump Game II: BFS-by-levels
+int jumps = 0, end = 0, far = 0;
+for (int i = 0; i < nums.length - 1; i++) {
+    far = Math.max(far, i + nums[i]);
+    if (i == end) {
+        jumps++;
+        end = far;
+    }
+}
+return jumps;
 
-# Gas Station
-if sum(gas) < sum(cost): return -1
-tank = start = 0
-for i in range(len(gas)):
-    tank += gas[i] - cost[i]
-    if tank < 0: tank, start = 0, i + 1
-return start
+// Gas Station
+int total = 0, tank = 0, start = 0;
+for (int i = 0; i < gas.length; i++) {
+    total += gas[i] - cost[i];
+    tank += gas[i] - cost[i];
+    if (tank < 0) {
+        tank = 0;
+        start = i + 1;
+    }
+}
+return total < 0 ? -1 : start;
 ```
 
 ## Pitfalls
